@@ -48,3 +48,9 @@
     --ring: 224.3 76.3% 48%;
   }
 }
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: "Inter", "Inter Placeholder", sans-serif;
+}

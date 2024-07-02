@@ -45,35 +45,40 @@ export default function PricingSection() {
 
 const pricingOptions = [
   {
-    title: "Starter",
-    price: "1 Credit",
+    title: "Basic",
+    price: "$9",
     description:
-      "Perfect for individuals looking to enhance their online presence.",
+      "Perfect for individuals and startups.",
     features: [
-      "4 AI Headshots",
+      "3 projects",
+      "100k requests / month",
     ],
     buttonText: "Choose Starter",
     bgColor: "bg-white",
   },
+  // {
+  //   title: "Basic",
+  //   price: "$49",
+  //   description:
+  //     "For small businesses and teams.",
+  //   features: [
+  //     "Unlimited projects",
+  //     "1M requests / month",
+  //   ],
+  //   buttonText: "Choose Basic",
+  //   bgColor: "bg-blue-50",
+  // },
   {
-    title: "Basic",
-    price: "3 Credits",
-    description:
-      "Ideal for professionals requiring frequent updates to their profiles.",
+    title: "Enterprise",
+    price: "Contact us",
+    description: "For large businesses and enterprises.",
     features: [
-      "12 AI Headshots",
+      "Unlimited projects",
+      "Unlimited requests",
+      "Custom Features",
+      "Fastest support",
     ],
-    buttonText: "Choose Basic",
-    bgColor: "bg-blue-50",
-  },
-  {
-    title: "Premium",
-    price: "5 Credits",
-    description: "The best value with unlimited possibilities.",
-    features: [
-      "20 AI Headshots",
-    ],
-    buttonText: "Choose Premium",
+    buttonText: "Choose Enterprise",
     bgColor: "bg-white",
   },
 ];

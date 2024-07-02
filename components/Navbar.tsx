@@ -1,5 +1,6 @@
 import { AvatarIcon } from "@radix-ui/react-icons";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+// import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import {
   DropdownMenu,
@@ -22,7 +23,7 @@ const stripeIsConfigured = process.env.NEXT_PUBLIC_STRIPE_IS_ENABLED === "true";
 export const revalidate = 0;
 
 export default async function Navbar() {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createClient();
 
   const {
     data: { user },
@@ -33,22 +34,34 @@ export default async function Navbar() {
   } = await supabase.from("credits").select("*").eq("user_id", user?.id ?? '').single()
 
   return (
-    <div className="flex w-full px-4 lg:px-40 py-4 items-center border-b text-center gap-8 justify-between">
+    <div className="flex w-full px-4 lg:px-40 py-4 items-center border-b text-center gap-8 justify-between fixed bg-white">
       <div className="flex gap-2 h-full">
         <Link href="/">
-          <h2 className="font-bold">Headshots AI</h2>
+          <h2 className="font-bold">Backless AI</h2>
         </Link>
       </div>
       {user && (
         <div className="hidden lg:flex flex-row gap-2">
           <Link href="/overview">
-            <Button variant={"ghost"}>Home</Button>
+            <Button variant={"ghost"}>Projects</Button>
           </Link>
+          {/* <Link href="/logs">
+            <Button variant={"ghost"}>Requests</Button>
+          </Link> */}
           {stripeIsConfigured && (
-            <Link href="/get-credits">
-              <Button variant={"ghost"}>Get Credits</Button>
+            <Link href="/billing">
+              <Button variant={"ghost"}>Billing</Button>
             </Link>
           )}
+          {/* <Link href="/settings">
+            <Button variant={"ghost"}>Settings</Button>
+          </Link> */}
+          <Link href="/docs">
+            <Button variant={"ghost"}>Docs</Button>
+          </Link>
+          <Link href="/components">
+            <Button variant={"ghost"}>Components</Button>
+          </Link>
         </div>
       )}
       <div className="flex gap-4 lg:ml-auto">
@@ -59,9 +72,14 @@ export default async function Navbar() {
         )}
         {user && (
           <div className="flex flex-row gap-4 text-center align-middle justify-center">
-            {stripeIsConfigured && (
-              <ClientSideCredits creditsRow={credits ? credits : null} />
-            )}
+            {/* {stripeIsConfigured && (
+              <div className="flex flex-row gap-2 items-center">
+                <ClientSideCredits creditsRow={credits ? credits : null} />
+                <button className="bg-blue-500 hover:bg-blue-700 text-white text-sm p-1 font-bold rounded">
+                  Add Credits
+                </button>
+              </div>
+            )} */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild className="cursor-pointer">
                 <AvatarIcon height={24} width={24} className="text-primary" />

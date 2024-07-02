@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Database } from "@/types/supabase";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+// import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from '@/utils/supabase/client'
 import disposableDomains from "disposable-email-domains";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -22,7 +23,8 @@ export const Login = ({
   host: string | null;
   searchParams?: { [key: string]: string | string[] | undefined };
 }) => {
-  const supabase = createClientComponentClient<Database>();
+  // const supabase = createClientComponentClient<Database>();
+  const supabase = createClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMagicLinkSent, setIsMagicLinkSent] = useState(false);
   const { toast } = useToast();
@@ -52,7 +54,7 @@ export const Login = ({
         title: "Something went wrong",
         variant: "destructive",
         description:
-          "Please try again, if the problem persists, contact us at hello@tryleap.ai",
+          "Please try again, if the problem persists, contact us at hello@backless.ai",
         duration: 5000,
       });
     }
@@ -102,19 +104,19 @@ export const Login = ({
     <>
       <div className="flex items-center justify-center p-8">
         <div className="flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 p-4 rounded-xl max-w-sm w-full">
-          <h1 className="text-xl">Welcome</h1>
+          <h1 className="text-xl">Come on back!</h1>
           <p className="text-xs opacity-60">
             Sign in or create an account to get started.
           </p>
-          {/* <Button
+          <Button
             onClick={signInWithGoogle}
             variant={"outline"}
-            className="font-semibold"
+            className="font-semibold bg-red-500 text-white"
           >
             <AiOutlineGoogle size={20} />
-            Continue with Google
+            {" "} Continue with Google
           </Button>
-          <OR /> */}
+          <OR />
 
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -152,7 +154,7 @@ export const Login = ({
               isLoading={isSubmitting}
               disabled={isSubmitting}
               variant="outline"
-              className="w-full"
+              className="w-full bg-white"
               type="submit"
             >
               Continue with Email

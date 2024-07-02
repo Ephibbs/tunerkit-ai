@@ -177,7 +177,7 @@ Default deploy using Vercel:
 
 ## How To Get Good Results
 
-[![Good results Demo](/public/good_results.png)](https://blog.tryleap.ai/create-an-ai-headshot-generator-fine-tune-stable-diffusion-with-leap-api/#step-1-gather-your-image-samples-%F0%9F%93%B8)
+[![Good results Demo](/public/good_results.png)](https://blog.backless.ai/create-an-ai-headshot-generator-fine-tune-stable-diffusion-with-leap-api/#step-1-gather-your-image-samples-%F0%9F%93%B8)
 
 The image samples used to teach the model what your face looks like are critical. Garbage in = garbage out.
 

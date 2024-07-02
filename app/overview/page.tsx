@@ -1,29 +1,31 @@
 import ClientSideModelsList from "@/components/realtime/ClientSideModelsList";
+import AccountDetails from "@/components/AccountDetails";
 import { Database } from "@/types/supabase";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+// import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
 export default async function Index() {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   if (!user) {
     return <div>User not found</div>;
   }
 
-  const { data: models } = await supabase
-    .from("models")
+  const { data: projects } = await supabase
+    .from("projects")
     .select(
-      `*, samples (
-      *
-    )`
-    )
-    .eq("user_id", user.id);
+      `*`
+    );
 
-  return <ClientSideModelsList serverModels={models ?? []} />;
+  return (
+    <>
+      <ClientSideModelsList serverProjects={projects ?? []} />
+    </>
+  );
 }

@@ -147,14 +147,14 @@ export default function TrainModelZone() {
       const messageWithButton = (
         <div className="flex flex-col gap-4">
           {responseMessage}
-          <a href="/get-credits">
-            <Button size="sm">Get Credits</Button>
+          <a href="/billing">
+            <Button size="sm">Billing</Button>
           </a>
         </div>
       );
       toast({
         title: "Something went wrong!",
-        description: responseMessage.includes("Not enough credits")
+        description: responseMessage.includes("Not enough balance")
           ? messageWithButton
           : responseMessage,
         duration: 5000,
