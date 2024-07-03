@@ -1,7 +1,6 @@
 import Login from "../login/page";
-// import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { createClient } from '@/utils/supabase/server'
-import { cookies } from "next/headers";
+import { AccountIdProvider } from '@/utils/account-id-provider'
 
 export const dynamic = "force-dynamic";
 
@@ -15,9 +14,14 @@ export default async function RootLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
   if (!user) {
     return <Login />;
   }
 
-  return <div className="flex w-full flex-col px-4 lg:px-40">{children}</div>;
+  return (
+    <div className="flex w-full flex-col px-4 lg:px-40">
+      {children}
+    </div>
+  );
 }

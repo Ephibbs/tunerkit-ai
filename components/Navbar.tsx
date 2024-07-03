@@ -42,7 +42,7 @@ export default async function Navbar() {
       </div>
       {user && (
         <div className="hidden lg:flex flex-row gap-2">
-          <Link href="/overview">
+          <Link href="/app">
             <Button variant={"ghost"}>Projects</Button>
           </Link>
           {/* <Link href="/logs">

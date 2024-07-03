@@ -2,10 +2,35 @@
 // Example using Supabase in React
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client'
+import Link from 'next/link';
 
 const SaveOpenAIKeySection = ({projectId}: any) => {
     const [openAIKey, setOpenAIKey] = useState('');
+    const [account_id, setAccountId] = useState('');
     const supabase = createClient();
+
+    // useEffect(async () => {
+    //     const { data: { user } } = await supabase.auth.getUser()
+
+    //     if (!user) {
+    //         return;
+    //     }
+    //     const fetchAccountId = async () => {
+    //         const { data: { account_id }, error } = await supabase
+    //             .from('members')
+    //             .select('account_id')
+    //             .eq('user_id', user.id)
+    //             .single();
+
+    //         if (error) {
+    //             console.error('Error fetching account ID:', error);
+    //         } else {
+    //             setAccountId(account_id);
+    //         }
+    //     };
+
+    //     await fetchAccountId();
+    // }, []);
 
     // const handleSave = async () => {
     //     const { data, error } = await supabase.auth.getSession();
@@ -27,17 +52,14 @@ const SaveOpenAIKeySection = ({projectId}: any) => {
     // };
 
     const handleSave = async () => {
-        const { data: { user } } = await supabase.auth.getUser()
-
-        const { data: { account_id } } = await supabase
-            .from('members')
-            .select('account_id')
-            .eq('user_id', user.id)
-            .single();
-
+        // const { error } = await supabase
+        //     .from('projects')
+        //     .upsert({ openai_key: openAIKey, id: projectId, account_id });
         const { error } = await supabase
-            .from('projects')
-            .upsert({ openai_key: openAIKey, id: projectId, account_id });
+            .from('accounts')
+            .update({ openai_key: openAIKey })
+            .eq('id', account_id);
+
         if (error) {
             console.error('Error updating openai key:', error.message);
             return;
@@ -46,19 +68,41 @@ const SaveOpenAIKeySection = ({projectId}: any) => {
     };
 
     useEffect(() => {
+        const fetchAccountId = async () => {
+            const { data: { user } } = await supabase.auth.getUser()
+            const { data: { account_id }, error } = await supabase
+                .from('members')
+                .select('account_id')
+                .eq('user_id', user?.id)
+                .single();
+
+            if (error) {
+                console.error('Error fetching account ID:', error);
+            } else {
+                setAccountId(account_id);
+                return account_id;
+            }
+        };
+
         const fetchKey = async () => {
+            // const { data, error } = await supabase
+            //     .from('projects')
+            //     .select('openai_key')
+            //     .eq('id', projectId)
+            //     .single();
+            const account_id = await fetchAccountId();
             const { data, error } = await supabase
-                .from('projects')
+                .from('accounts')
                 .select('openai_key')
-                .eq('id', projectId)
+                .eq('id', account_id)
                 .single();
             if (error) {
                 console.error('Error fetching key:', error);
             } else {
                 setOpenAIKey(data.openai_key);
+                setAccountId(account_id);
             }
         };
-
         fetchKey();
     }, []);
 
@@ -73,6 +117,9 @@ const SaveOpenAIKeySection = ({projectId}: any) => {
                 <p>
                     Input your OpenAI key here. This key is encrypted and stored securely.
                 </p>
+                <Link href="https://platform.openai.com/account/api-keys" className="text-blue-500 hover:underline">
+                    Get your OpenAI key here.
+                </Link>
             </div>
         </div>
     );

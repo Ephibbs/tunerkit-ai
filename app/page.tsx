@@ -32,7 +32,7 @@ export default async function Index() {
   } = await supabase.auth.getUser();
   console.log(user);
   if (user && isSubscribed(user, supabase)) {
-    return redirect("/overview");
+    return redirect("/app");
   }
 
   return (

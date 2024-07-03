@@ -19,98 +19,126 @@ To read more about using these font, please visit the Next.js documentation:
 **/
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
 import { Input } from "@/components/ui/input"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { createClient } from "@/utils/supabase/client"
 
-export function RateLimitSetter({projectId, rateLimit, ratePeriod, type, unit}: any) {
+export function RateLimitSetter({projectId, rateLimit, ratePeriod, unit, type}: any) {
+  const supabase = createClient();
   const [value, setValue] = useState(rateLimit)
   const [timeUnit, setTimeUnit] = useState(ratePeriod)
-  const [rateType, setRateType] = useState(type)
   const [rateUnit, setRateUnit] = useState(unit)
-  return (
-    <div className="bg-background rounded-lg border p-6 w-full max-w-md">
-      <div className="grid gap-3">
-        <div>
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <Input
-              id="value"
-              type="number"
-              value={value}
-              onChange={(e) => setValue(Number(e.target.value))}
-              className="w-24 text-right"
-            />
-            {
-              rateUnit === 'requests' &&
-              <>
-              <Label htmlFor="value" className="block font-medium">
-                requests each
-              </Label>
-                <button onClick={() => setRateUnit('cents')} className="text-white bg-red-500 p-1 rounded-md text-xs">
-                use cents
-              </button>
-              </>
-            }
-            {
-              rateUnit === 'cents' &&
-              <>
-                <Label htmlFor="value" className="block font-medium">
-                  US cents each
-                </Label>
-                <button onClick={() => setRateUnit('requests')} className="text-white bg-red-500 p-1 rounded-md text-xs">
-                  use requests
-                </button>
-              </>
-            }
 
-          </div>
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+
+  const setRateValue = (value: string) => {
+    if (rateUnit === 'requests') {
+      setValue(Number(value))
+    } else {
+      setValue(Number(value) * 100)
+    }
+  }
+
+  const saveValue = async () => {
+    console.log('Saving value:', projectId, value, timeUnit, rateUnit)
+    let result;
+    if (type === 'project_user') {
+      result = await supabase.from('projects').update({
+        user_rate_limit: value,
+        user_rate_period: timeUnit,
+      }).eq('id', projectId)
+    } else if (type === 'project') {
+      result = await supabase.from('projects').update({
+        rate_limit: value,
+        rate_period: timeUnit,
+      }).eq('id', projectId)
+    }
+    console.log('Value saved:', projectId, value, timeUnit, rateUnit, result);
+  }
+
+  const setSaveTimer = () => {
+    if (timer) {
+      clearTimeout(timer);
+      console.log('Timer reset');
+    }
+    setTimer(setTimeout(saveValue, 1000));
+  };
+
+  useEffect(() => {
+    setSaveTimer();
+  }, [value, timeUnit, rateUnit]);
+
+  const rateValue = rateUnit === 'cents' ? value / 100 : Math.round(value)
+
+  return (
+    <div className="bg-background rounded-lg border p-4 w-full max-w-md">
+      <div className="grid gap-3">
+        <div className="flex items-center justify-center gap-2">
+          {
+            rateUnit === 'cents' &&
+            <p>
+              $
+            </p>
+          }
+          <Input
+            id="value"
+            type="number"
+            step={rateUnit === 'cents' ? 0.01 : 1}
+            value={rateValue}
+            onChange={(e) => setRateValue(e.target.value)}
+            className="w-24 text-right"
+          />
+          {
+            rateUnit === 'requests' &&
+            <>
+            <Label htmlFor="value" className="block font-medium">
+              request{value > 1 ? 's' : ''} each
+            </Label>
+            </>
+          }
+          {
+            rateUnit === 'cents' &&
+            <>
+              <Label htmlFor="value" className="block font-medium">
+                each
+              </Label>
+            </>
+          }
+          <Select value={timeUnit} onValueChange={(value) => setTimeUnit(value)}>
+            <SelectTrigger className="w-[100px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="minute">minute</SelectItem>
+              <SelectItem value="hour">hour</SelectItem>
+              <SelectItem value="day">day</SelectItem>
+              <SelectItem value="week">week</SelectItem>
+              <SelectItem value="month">month</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-        <div>
-          <RadioGroup id="time-unit" value={timeUnit} onValueChange={setTimeUnit} className="grid grid-cols-5 gap-2 mt-2">
-            <Label
-              htmlFor="time-unit-minute"
-              className={`border cursor-pointer rounded-md p-2 flex items-center justify-center ${timeUnit === "minute" ? "bg-muted" : ""
-                }`}
-            >
-              <RadioGroupItem id="time-unit-minute" value="minute" />
-              Minute
-            </Label>
-            <Label
-              htmlFor="time-unit-hour"
-              className={`border cursor-pointer rounded-md p-2 flex items-center justify-center ${timeUnit === "hour" ? "bg-muted" : ""
-                }`}
-            >
-              <RadioGroupItem id="time-unit-hour" value="hour" />
-              Hour
-            </Label>
-            <Label
-              htmlFor="time-unit-day"
-              className={`border cursor-pointer rounded-md p-2 flex items-center justify-center ${timeUnit === "day" ? "bg-muted" : ""
-                }`}
-            >
-              <RadioGroupItem id="time-unit-day" value="day" />
-              Day
-            </Label>
-            <Label
-              htmlFor="time-unit-week"
-              className={`border cursor-pointer rounded-md p-2 flex items-center justify-center ${timeUnit === "week" ? "bg-muted" : ""
-                }`}
-            >
-              <RadioGroupItem id="time-unit-week" value="week" />
-              Week
-            </Label>
-            <Label
-              htmlFor="time-unit-month"
-              className={`border cursor-pointer rounded-md p-2 flex items-center justify-center ${timeUnit === "month" ? "bg-muted" : ""
-                }`}
-            >
-              <RadioGroupItem id="time-unit-month" value="month" />
-              Month
-            </Label>
-          </RadioGroup>
-        </div>
+        {
+          rateUnit === 'requests' &&
+          <button onClick={() => setRateUnit('cents')} className="text-blue-500 p-1 ml-2 rounded-md text-xs">
+            limit by cost
+          </button>
+        }
+        {
+          rateUnit === 'cents' &&
+          <>
+            <button onClick={() => setRateUnit('requests')} className="text-blue-500 p-1 ml-2 rounded-md text-xs">
+              limit by requests
+            </button>
+          </>
+        }
       </div>
     </div>
   )

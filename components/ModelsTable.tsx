@@ -24,7 +24,7 @@ export default function ProjectsList({ projects }: { projects: Array<{ id: numbe
   const router = useRouter();
 
   const handleRedirect = (id: number) => {
-    router.push(`/overview/projects/${id}`);
+    router.push(`/app/projects/${id}`);
   };
 
   return (

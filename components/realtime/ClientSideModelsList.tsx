@@ -98,7 +98,7 @@ export default function ClientSideProjectsList({
         <div className="flex flex-col gap-4 my-16">
           <div className="flex flex-row gap-4 w-full justify-between items-center text-center">
             <h1>Your projects</h1>
-            <Link href="/overview/projects/new" className="w-fit">
+            <Link href="/app/projects/new" className="w-fit">
               <Button size={"sm"}>
                 New project
               </Button>
@@ -114,7 +114,7 @@ export default function ClientSideProjectsList({
             Start your first project
           </h1>
           <div>
-            <Link href="/overview/projects/new">
+            <Link href="/app/projects/new">
               <Button size={"lg"}>New project</Button>
             </Link>
           </div>

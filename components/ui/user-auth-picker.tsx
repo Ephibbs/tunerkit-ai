@@ -111,6 +111,29 @@ const UserAuthPicker = (props: any) => {
             </div>
             {
                 authentication === 'supabase' && (
+                    <div className="mt-4 flex flex-col gap-2 max-w-sm text-center mx-auto">
+                        <input
+                            type="text"
+                            placeholder="Supabase URL"
+                            className="input mt-2 p-2 rounded-md"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Supabase Key"
+                            className="input mt-2 p-2 rounded-md"
+                        />
+                    </div>
+                )
+            }
+            {
+                authentication === 'firebase' && (
+                    <div className="mt-4 text-center">
+                        <input
+                            type="text"
+                            placeholder="Firebase API Key"
+                            className="input mt-2 p-2 rounded-md"
+                        />
+                    </div>
                 )
             }
             <p className="mt-4">
