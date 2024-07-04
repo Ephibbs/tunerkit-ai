@@ -1,0 +1,49 @@
+{
+    "small": {
+        "name": "Small",
+        "price": 0,
+        "requests": 1000,
+        "features": [
+        "Basic support",
+        "1 project",
+        "1000 requests per month",
+        "1000 users"
+        ]
+    },
+    "medium": {
+        "name": "Medium",
+        "price": 19,
+        "requests": 20000,
+        "features": [
+        "Priority support",
+        "3 projects",
+        "20K requests per month",
+        "5000 users"
+        ]
+    },
+    "large": {
+        "name": "Large",
+        "price": 199,
+        "requests": 300000,
+        "features": [
+        "Unlimited users",
+        "24/7 support",
+        "Unlimited projects",
+        "300k requests per month",
+        "300k users"
+        ]
+    },
+    "enterprise": {
+        "name": "Enterprise",
+        "price": null,
+        "features": [
+        "Unlimited users",
+        "24/7 support",
+        "Unlimited projects",
+        "Unlimited requests per month",
+        "Unlimited users",
+        "Custom features",
+        "Private cloud"
+        ]
+    }
+}

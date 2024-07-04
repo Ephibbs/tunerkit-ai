@@ -1,5 +1,30 @@
 import { redis } from './redis';
 
+const fixedLuaScript = `
+local key = KEYS[1]
+local window = tonumber(ARGV[1])
+local max_requests = tonumber(ARGV[2])
+local requests = redis.call('INCR',key)
+redis.call('EXPIRE', key, window)
+if requests <= max_requests then
+    return 0
+else
+  redis.call('DECR',key)
+  return 1
+end
+`;
+
+// Function to execute the rate limit check
+export async function fixedWindowRequest(key: string, windowSize: number, limit: number) {
+  try {
+    const result = await redis.eval(fixedLuaScript, 1, key, windowSize, limit);
+    // console.log(result === 0 ? 'Request allowed' : 'Rate limit exceeded');
+    return result === 0;
+  } catch (error) {
+    console.error('Error executing Lua script:', error);
+  }
+}
+
 const slidingLuaScript = `
 local key = KEYS[1] -- First key name passed to the script
 local window = tonumber(ARGV[1]) -- Window size for the rate limiting, as a number
@@ -84,5 +109,17 @@ export async function rateLimitProjectUserRequests(projectId: string, userId: st
     
     if (!isAllowed) {
         throw new Error('User rate limit exceeded');
+    }
+}
+
+export async function rateLimitAccountRequests(accountId: string, rateLimit: number) {
+    const key = `account:${accountId}:rate-limit`;
+    const windowSize = 2628288; // 31 days in seconds
+    const limit = rateLimit;
+    
+    const isAllowed = await fixedWindowRequest(key, windowSize, limit);
+    
+    if (!isAllowed) {
+        throw new Error('Account rate limit exceeded');
     }
 }

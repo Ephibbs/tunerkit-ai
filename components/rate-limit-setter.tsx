@@ -48,7 +48,6 @@ export function RateLimitSetter({projectId, rateLimit, ratePeriod, unit, type}: 
   }
 
   const saveValue = async () => {
-    console.log('Saving value:', projectId, value, timeUnit, rateUnit)
     let result;
     if (type === 'project_user') {
       result = await supabase.from('projects').update({

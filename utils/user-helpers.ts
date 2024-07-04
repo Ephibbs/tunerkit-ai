@@ -1,72 +1,218 @@
 import { createClient } from '@supabase/supabase-js';
 import hash from './hasher';
+import PLANS from './PLANS.json';
+import { decryptKey } from '@/utils/encrypt';
 
 // Initialize the Supabase client with environment variables
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const verifyUser = async (user_id: string, widget_user_id: string, jwt: string, verify_endpoint: string) => {
+export const getProjectAccount = async (project_id: string) => {
+  const { data, error } = await supabase
+    .from('projects')
+    .select(`
+      *,
+      accounts:account_id (
+        id,
+        plan
+      ),
+      user_groups:user_group_id (
+        id,
+        type,
+        metadata
+      )
+    `)
+    .eq('id', project_id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching project with account details:', error);
+    return null;
+  }
+
+  return data;
+}
+
+export const verifyTrackIp = async (ip_address: string, account_id: string, project_id: string) => {
+  const { data, error } = await supabase
+    .from('project_users')
+    .upsert({ ip_address, account_id, project_id }, { onConflict: ['ip_address', 'account_id', 'project_id'] })
+    .select('id')
+    .single();
+
+  if (error) {
+    console.error('Error upserting project user:', error);
+    return null;
+  }
+
+  return data.id;
+};
+
+const getTrackedUser = async ({hashedJwt, account_id, external_user_id}: {hashedJwt: string, account_id: string, external_user_id: string}) => {
+    const { data: jwtData, error: jwtError } = await supabase
+        .from('jwts')
+        .select('*')
+        .eq('account_id', account_id)
+        .eq('encrypted_token', hashedJwt)
+        .eq('external_user_id', external_user_id)
+        .single();
+
+    // Handle possible errors from the Supabase query
+    if (jwtError) {
+        console.error('Error fetching JWT:', jwtError);
+        return null;
+    }
+
+    // 2. If they do, return the user_id
+    if (jwtData) {
+        return jwtData.project_user_id;
+    }
+}
+
+const verifyUser = async ({jwt, verify_endpoint, external_user_id}: {jwt: string, verify_endpoint: string, external_user_id: string}) => {
+    const response = await fetch(verify_endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`
+        }
+    });
+
+    if (!response.ok) {
+        // If the response is not OK, log the error and return the negative status
+        console.error('Failed to verify user:', response.statusText);
+        return false
+    }
+
+    const data = await response.json();
+
+    // Verify the user_id in your application to prevent JWT substitution attacks
+    if (data.sub !== external_user_id) {
+        return false;
+    }
+
+    return true;
+}
+
+export const trackUser = async ({account_id, project_id, external_user_id, hashedJwt}: {account_id: string, project_id: string, external_user_id: string, hashedJwt: string}) => {
+    const { data: projectUser, error: upsertError } = await supabase
+        .from('project_users')
+        .upsert([{ external_user_id, account_id, project_id }]);
+
+    if (upsertError) {
+        console.error('Error upserting project user:', upsertError);
+        return false;
+    }
+
+    const project_user_id = (projectUser as any).id;
+
+    // Insert the JWT into the 'jwts' table if verification is successful
+    const { data: insertData, error: insertError } = await supabase
+        .from('jwts')
+        .insert([{ external_user_id, account_id, encrypted_token: hashedJwt, project_user_id }]);
+
+    if (insertError) {
+        console.error('Error inserting JWT:', insertError);
+        return false;
+    }
+
+    return project_user_id;
+}
+
+export const verifyTrackUser = async ({
+    account_id,
+    project_id,
+    ip_address,
+    external_user_id,
+    jwt,
+    verify_endpoint
+}: {account_id: string, project_id: string, ip_address: string, external_user_id: string, jwt: string, verify_endpoint: string}) => {
+    console.log('verifyTrackUser', {account_id, project_id, ip_address, external_user_id, jwt, verify_endpoint});
     try {
-        // 1. Check if the user_id and 1-way encrypted jwt already exist in the jwts table in Supabase
+        // If the user is not authenticated, track them by IP address
+        const isPublicProject = !jwt && ip_address
+        if (isPublicProject) {
+            return verifyTrackIp(ip_address, account_id, project_id);
+        }
+
         const hashedJwt = hash(jwt);
-        const { data: jwtData, error: jwtError } = await supabase
-            .from('jwts')
-            .select('*')
-            .eq('widget_user_id', widget_user_id)
-            .eq('user_id', user_id)
-            .eq('encrypted_token', hashedJwt)
-            .single();
 
-        // Handle possible errors from the Supabase query
-        if (jwtError) {
-            console.error('Error fetching JWT:', jwtError);
-            return { verified: false, tracked: false, error: jwtError.message };
+        // Have we already seen this user?
+        let trackedUser = await getTrackedUser({hashedJwt, account_id, external_user_id});
+        if (trackedUser) {
+            return trackedUser;
         }
 
-        // 2. If they do, return the user_id and tracked status
-        if (jwtData) {
-            return { verified: true, tracked: true, user_id: jwtData.user_id };
+        // Verify the user with the external service
+        const isVerifiedUser = await verifyUser({jwt, verify_endpoint, external_user_id});
+        if (!isVerifiedUser) {
+            return false;
         }
 
-        // 3. If they don't, call the verify_endpoint with the jwt and verify the user
-        const response = await fetch(verify_endpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${jwt}`
-            }
-        });
-
-        if (!response.ok) {
-            // If the response is not OK, log the error and return the negative status
-            console.error('Failed to verify user:', response.statusText);
-            return { verified: false, error: response.statusText };
+        // Create a new project user and/or JWT record
+        trackedUser = await trackUser({account_id, project_id, external_user_id, hashedJwt});
+        if (!trackedUser) {
+            return false;
         }
 
-        const data = await response.json();
-
-        // Verify the user_id in your application to prevent JWT substitution attacks
-        if (data.sub !== user_id) {
-            return { verified: false, error: 'User ID does not match the expected user ID.' };
-        }
-
-        // Optionally, insert the JWT into the 'jwts' table if verification is successful
-        const { data: insertData, error: insertError } = await supabase
-            .from('jwts')
-            .insert([{ user_id: user_id, widget_user_id: widget_user_id, encrypted_token: hashedJwt }]);
-
-        if (insertError) {
-            console.error('Error inserting JWT:', insertError);
-            return { exists: false, tracked: false, error: insertError.message };
-        }
-
-        return { exists: true, tracked: true, user_id: user_id };
+        return trackedUser.project_user_id;
     } catch (error) {
         console.error('Error in verifyUser function:', error);
         return { exists: false, tracked: false, error: error.message };
     }
 };
+
+export const convertRatePeriod = (period: string) => {
+    switch (period) {
+        case 'minute':
+            return 60;
+        case 'hour':
+            return 3600;
+        case 'day':
+            return 86400;
+        case 'week':
+            return 604800;
+        case 'month':
+            return 2628000;
+        default:
+            throw new Error('Invalid rate period');
+    }
+}
+
+export const getAccountRateLimit = (account: any) => {
+    switch (account.plan) {
+        case 'small':
+            return PLANS['small'].requests
+        case 'medium':
+            return PLANS['medium'].requests
+        case 'large':
+            return PLANS['large'].requests
+        case 'enterprise':
+            return account.custom_limit;
+        default:
+            return 1000;
+    }
+}
+
+export const getOpenaiKey = async (account_id: string) => {
+    const { data, error: error } = await supabase
+        .from('secret_keys')
+        .select('openai_key')
+        .eq('account_id', account_id)
+        .single();
+
+    const encrypted_key = data?.openai_key;
+
+    const openai_key = decryptKey(encrypted_key, process.env.ENCRYPTION_PASSWORD as string);
+
+    if (error) {
+        console.error('Error fetching openai key:', error);
+        return null;
+    }
+
+    return openai_key;
+}
 
 /**
  * Creates a user in the widget_users table if they don't already exist.
@@ -117,6 +263,3 @@ async function createUserIfNotExists(userId: string, externalId: string, metadat
         return { error: error.message };
     }
 }
-
-
-export {verifyUser, createUser};
