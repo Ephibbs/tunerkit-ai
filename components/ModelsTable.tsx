@@ -28,9 +28,9 @@ export default function ProjectsList({ projects }: { projects: Array<{ id: numbe
   };
 
   return (
-    <div className="rounded-md border p-4">
+    <div className="rounded-md border p-4 space-y-2">
       {projects?.map((project) => (
-        <div key={project.id} className="p-2 hover:bg-gray-200 cursor-pointer" onClick={() => handleRedirect(project.id)}>
+        <div key={project.id} className="p-2 hover:bg-gray-200 cursor-pointer rounded-sm" onClick={() => handleRedirect(project.id)}>
           {project.name}
         </div>
       ))}

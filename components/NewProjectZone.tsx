@@ -55,7 +55,7 @@ async function fetchUserData(token: string, supabaseUrl: string) {
 }
 
 
-const getVerifyUrl = (type: string, options: object) => {
+const getVerifyUrl = (type: string, options: any) => {
   // Implement the logic to get the verify URL based on the type and options just the user endpoint given any necessary parameters in options
   if (type === "supabase") {
     const supabaseUrl = `https://${options.projectId}.supabase.co`
@@ -88,7 +88,8 @@ const createProjectInSupabase = async (supabase: any, name: string, app_user_gro
   console.log('name', name);
   const { data, error } = await supabase
     .from('projects')
-    .insert([{ name, app_user_group_id: null, account_id }]);
+    .insert([{ name, user_group_id: null, account_id }])
+    .select();
 
   if (error) throw new Error(error.message);
   return data;
@@ -118,18 +119,18 @@ export default function NewProjectZone() {
   const createProject = useCallback(async () => {
     setIsLoading(true);
     try {
-      await createProjectInSupabase(supabase, name, null);
+      const data = await createProjectInSupabase(supabase, name, null);
       toast({
         title: "Project Created",
         description: "Your project has been created successfully.",
-        status: "success"
+        // status: "success"
       });
-      router.push('/dashboard'); // Adjust as needed to direct users to the appropriate route
-    } catch (error) {
+      router.push(`/app/projects/${data[0].id}`);
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
-        status: "error"
+        // status: "error"
       });
     }
     setIsLoading(false);

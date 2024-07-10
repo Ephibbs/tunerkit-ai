@@ -95,9 +95,11 @@ export default function ClientSideProjectsList({
   return (
     <div id="train-model-container" className="w-full">
       {projects && projects.length > 0 && (
-        <div className="flex flex-col gap-4 my-16">
+        <div className="flex flex-col gap-4 my-16 max-w-lg m-auto">
           <div className="flex flex-row gap-4 w-full justify-between items-center text-center">
-            <h1>Your projects</h1>
+            <h1
+              className="text-2xl text-bold"
+            >Your projects</h1>
             <Link href="/app/projects/new" className="w-fit">
               <Button size={"sm"}>
                 New project

@@ -51,7 +51,7 @@ const UserAuthPicker = (props: any) => {
                             Supabase
                         </Label>
                     </div>
-                    <div>
+                    {/* <div>
                         <RadioGroupItem
                             value="firebase"
                             id="firebase"
@@ -64,7 +64,7 @@ const UserAuthPicker = (props: any) => {
                         >
                             Firebase
                         </Label>
-                    </div>
+                    </div> */}
                     {/* <div>
                         <RadioGroupItem
                             value="cognito"

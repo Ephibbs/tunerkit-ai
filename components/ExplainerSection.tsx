@@ -5,7 +5,7 @@ import CodeBlock from "@/components/ui/code-block";
 
 export default function ExplainerSection() {
   return (
-    <div className="w-full max-w-6xl mt-16 p-8 bg-gray-100 rounded-lg space-y-8">
+    <div className="w-full max-w-6xl mt-16 p-8 bg-gray-100 rounded-lg space-y-8 text-center">
       <h2 className="text-3xl font-bold text-center mb-8">How It Works</h2>
 
       {/* Step 1: Upload your images */}
@@ -17,8 +17,8 @@ export default function ExplainerSection() {
           <h3 className="text-2xl font-semibold">Install backless</h3>
         </div>
         <div className="text-center">
-          <CodeBlock>
-            <span className="shrink-0 text-gray-500">$</span>
+          <CodeBlock copyText={'npm i backless-ai'}>
+            <span className="shrink-0 text-gray-500 user-select-none">$</span>
             <span className="flex-1">
               <span>npm i {' '}</span>
               <span className="text-yellow-500">backless-ai</span>
@@ -36,7 +36,7 @@ export default function ExplainerSection() {
           <div className="text-3xl font-bold text-red-600 bg-white border-2 border-red-600 rounded-full w-10 h-10 flex items-center justify-center">
             2
           </div>
-          <h3 className="text-2xl font-semibold">Use pre-built react components</h3>
+          <h3 className="text-2xl font-semibold">Explore our components</h3>
         </div>
         <p className="text-sm text-gray-600 text-center max-w-lg m-auto">
           Add components to your site including standalone chat, modal chat, genative photo and many more. You can even build your own! 100% customizable and easy to use!
@@ -49,7 +49,7 @@ export default function ExplainerSection() {
           <div className="text-3xl font-bold text-red-600 bg-white border-2 border-red-600 rounded-full w-10 h-10 flex items-center justify-center">
             3
           </div>
-          <h3 className="text-2xl font-semibold">Access your data wherever you need it</h3>
+          <h3 className="text-2xl font-semibold">Access data & metrics</h3>
         </div>
         <p className="text-sm text-gray-600 text-center max-w-lg m-auto">
           Access your users' conversations and images from your frontend or backend through our sdk.

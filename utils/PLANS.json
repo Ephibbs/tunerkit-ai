@@ -5,9 +5,9 @@
         "requests": 1000,
         "features": [
         "Basic support",
-        "1 project",
+        "5 project",
         "1000 requests per month",
-        "1000 users"
+        "Up to 1000 users"
         ]
     },
     "medium": {
@@ -16,9 +16,9 @@
         "requests": 20000,
         "features": [
         "Priority support",
-        "3 projects",
+        "Unlimited projects",
         "20K requests per month",
-        "5000 users"
+        "Up to 20k users"
         ]
     },
     "large": {
@@ -26,19 +26,17 @@
         "price": 199,
         "requests": 300000,
         "features": [
-        "Unlimited users",
-        "24/7 support",
-        "Unlimited projects",
-        "300k requests per month",
-        "300k users"
+          "Priority support",
+          "Unlimited projects",
+          "300k requests per month",
+          "Up to 300k users"
         ]
     },
     "enterprise": {
         "name": "Enterprise",
         "price": null,
         "features": [
-        "Unlimited users",
-        "24/7 support",
+        "Highest priority support",
         "Unlimited projects",
         "Unlimited requests per month",
         "Unlimited users",

@@ -1,6 +1,4 @@
 import ClientSideModelsList from "@/components/realtime/ClientSideModelsList";
-import AccountDetails from "@/components/AccountDetails";
-import { Database } from "@/types/supabase";
 // import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";

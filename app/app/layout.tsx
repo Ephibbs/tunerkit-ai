@@ -1,6 +1,5 @@
 import Login from "../login/page";
 import { createClient } from '@/utils/supabase/server'
-import { AccountIdProvider } from '@/utils/account-id-provider'
 
 export const dynamic = "force-dynamic";
 

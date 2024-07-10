@@ -102,16 +102,16 @@ export const Login = ({
 
   return (
     <>
-      <div className="flex items-center justify-center p-8">
-        <div className="flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 p-4 rounded-xl max-w-sm w-full">
-          <h1 className="text-xl">Come on back!</h1>
-          <p className="text-xs opacity-60">
+      <div className="flex items-center justify-center p-8 h-full">
+        <div className="flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 p-4 rounded-xl max-w-sm w-full shadow-md">
+          <h1 className="text-xl text-center">Sign in</h1>
+          <p className="text-xs opacity-60 text-center">
             Sign in or create an account to get started.
           </p>
           <Button
             onClick={signInWithGoogle}
             variant={"outline"}
-            className="font-semibold bg-red-500 text-white"
+            className="font-semibold bg-red-500 text-white hover:text-white hover:bg-red-600 shadow-sm"
           >
             <AiOutlineGoogle size={20} />
             {" "} Continue with Google
@@ -141,6 +141,7 @@ export const Login = ({
                         "Please use a permanent email address",
                     },
                   })}
+                  className="bg-white"
                 />
                 {isSubmitted && errors.email && (
                   <span className={"text-xs text-red-400"}>
@@ -154,7 +155,7 @@ export const Login = ({
               isLoading={isSubmitting}
               disabled={isSubmitting}
               variant="outline"
-              className="w-full bg-white"
+              className="w-full bg-gray-800 text-white hover:text-white hover:bg-gray-900 shadow-sm"
               type="submit"
             >
               Continue with Email
@@ -168,9 +169,9 @@ export const Login = ({
 
 export const OR = () => {
   return (
-    <div className="flex items-center my-1">
+    <div className="flex items-center my-1 w-1/2 m-auto">
       <div className="border-b flex-grow mr-2 opacity-50" />
-      <span className="text-sm opacity-50">OR</span>
+      <span className="text-sm opacity-50">or</span>
       <div className="border-b flex-grow ml-2 opacity-50" />
     </div>
   );

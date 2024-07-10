@@ -13,7 +13,7 @@ type HandleUploadBody = {
 };
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY as string;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 type EndpointKeys = keyof typeof modelEndpoints;
@@ -47,7 +47,6 @@ async function checkInput({
   }
 
   const project_account = await getProjectAccount(project_id);
-  console.log('project_account', project_account);
   if (!project_account) {
     return new NextResponse(JSON.stringify({ error: 'Project not found' }), {
       status: 404,
@@ -88,7 +87,7 @@ async function fetchWithRetries(url: string, options = {}, retries = 3, timeout 
       if (!response.ok) {
         const shouldRetry = [408, 409, 429].includes(response.status) || response.status >= 500;
         if (shouldRetry) {
-          const error = new Error(`HTTP error! status: ${response.status}`);
+          const error = new Error(`HTTP error! status: ${response.status}`) as any;
           error.response = response;
           throw error;
         }
@@ -128,6 +127,9 @@ async function handleStreamingResponse(response: any, logData: any) {
       while (true) {
         const { done, value } = await reader.read();
         if (done) {
+          // logData.response_body = data;
+          // logData.response_code = response.status;
+          // await saveLogToSupabase(logData);
           controller.close();
           break;
         }
@@ -136,17 +138,14 @@ async function handleStreamingResponse(response: any, logData: any) {
     }
   });
 
-  const data = await new Response(stream).text();
-  logData.response_body = data;
-  logData.response_code = response.status;
+  // const data = await new Response(stream).text();
+  // logData.response_body = data;
+  // logData.response_code = response.status;
 
-  await saveLogToSupabase(logData);
+  // await saveLogToSupabase(logData);
 
-  return new NextResponse(data, {
-    status: response.status,
-    headers: {
-      'Content-Type': 'application/json'
-    }
+  return new NextResponse(stream, {
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
   });
 }
 
@@ -166,9 +165,11 @@ async function handleNonStreamingResponse(response: any, logData: any) {
 }
 
 
-async function handleOpenAICall({ account_id, project_user_id, project_id, endpoint, body }: any) {
+async function handleOpenAICall({ account_id, project_user_id, project_id, endpoint, body }: any): Promise<NextResponse> {
+  console.time(' - getOpenaiKey');
   const openaiKey = await getOpenaiKey(account_id);
-
+  console.timeEnd(' - getOpenaiKey');
+  
   try {
     const response = await fetchWithRetries(endpoint.url, {
       method: 'POST',
@@ -190,7 +191,8 @@ async function handleOpenAICall({ account_id, project_user_id, project_id, endpo
     };
 
     if (body.stream) {
-      return await handleStreamingResponse(response, logData);
+      console.log('streaming response');
+      return handleStreamingResponse(response, logData);
     } else {
       return await handleNonStreamingResponse(response, logData);
     }
@@ -246,20 +248,23 @@ export async function POST(request: Request): Promise<NextResponse> {
   const project_id = request?.headers?.get('X-Project-Id');
   const endpointKey = request?.url.split('/').pop() as EndpointKeys;
 
-  console.log('external_user_id', external_user_id);
-  console.log('project_id', project_id);
-  console.log('jwt', jwt);
-  console.log('endpointKey', endpointKey);
-  console.log('body', body);
+  // console.log('external_user_id', external_user_id);
+  // console.log('project_id', project_id);
+  // console.log('jwt', jwt);
+  // console.log('endpointKey', endpointKey);
+  // console.log('body', body);
 
   // Check if the request is valid
+  console.time('checkInput');
   const inputCheck = await checkInput({ project_id, jwt: jwt || '', endpointKey });
   if (inputCheck instanceof NextResponse) {
     return inputCheck;
   }
   const { project_account, endpoint } = inputCheck;
+  console.timeEnd('checkInput');
 
   // Verify and track the user
+  console.time('verifyTrackUser');
   const ip = request.headers.get('x-forwarded-for')?.split(',').shift();
   const project_user_id = await verifyTrackUser({
     account_id: project_account.account_id,
@@ -277,14 +282,16 @@ export async function POST(request: Request): Promise<NextResponse> {
       }
     });
   }
+  console.timeEnd('verifyTrackUser');
 
   // Rate limit the requests
+  console.time('rateLimitRequests');
   try {
     const accountPromise = rateLimitAccountRequests(project_account.account_id, getAccountRateLimit(project_account));
     const projectUserPromise = rateLimitProjectUserRequests(project_account.id, project_user_id, project_account.user_rate_limit, convertRatePeriod(project_account.user_rate_period));
     const projectPromise = rateLimitProjectRequests(project_account.id, project_account.rate_limit, convertRatePeriod(project_account.rate_period));
     await Promise.all([accountPromise, projectUserPromise, projectPromise]);
-  } catch (error) {
+  } catch (error: any) {
     return new NextResponse(JSON.stringify({ error: error.message }), {
       status: 429,
       headers: {
@@ -292,7 +299,12 @@ export async function POST(request: Request): Promise<NextResponse> {
       }
     });
   }
+  console.timeEnd('rateLimitRequests');
 
   // Make the OpenAI call
-  return await handleOpenAICall({ account_id: project_account.account_id, project_user_id, project_id, endpoint, body });
+  console.time('handleOpenAICall');
+  const response = await handleOpenAICall({ account_id: project_account.account_id, project_user_id, project_id, endpoint, body });
+  console.timeEnd('handleOpenAICall');
+
+  return response;
 }

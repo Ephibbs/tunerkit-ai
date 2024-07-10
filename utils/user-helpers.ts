@@ -4,12 +4,14 @@ import PLANS from './PLANS.json';
 import { decryptKey } from '@/utils/encrypt';
 
 // Initialize the Supabase client with environment variables
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY as string;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const getProjectAccount = async (project_id: string) => {
-  const { data, error } = await supabase
+    console.time('getProjectAccount');
+
+    const { data, error } = await supabase
     .from('projects')
     .select(`
       *,
@@ -26,18 +28,54 @@ export const getProjectAccount = async (project_id: string) => {
     .eq('id', project_id)
     .single();
 
-  if (error) {
-    console.error('Error fetching project with account details:', error);
-    return null;
-  }
+    // const { data: project } = await supabase
+    //     .from('projects')
+    //     .select('*')
+    //     .eq('id', project_id)
+    //     .single();
 
-  return data;
+    console.timeEnd('getProjectAccount');
+
+    // const { account_id, user_group_id } = project;
+
+    // console.time('getProjectAccount:account');
+    
+    // const { data: account } = await supabase
+    //     .from('accounts')
+    //     .select('*')
+    //     .eq('id', account_id)
+    //     .single();
+
+    // console.timeEnd('getProjectAccount:account');
+
+    // console.time('getProjectAccount:user_group');
+
+    // const { data: user_group } = await supabase
+    //     .from('user_groups')
+    //     .select('*')
+    //     .eq('id', user_group_id)
+    //     .single();
+
+    // console.timeEnd('getProjectAccount:user_group');
+
+    // if (error) {
+    //     console.error('Error fetching project with account details:', error);
+    //     return null;
+    // }
+
+    // return {
+    //     ...project,
+    //     accounts: account,
+    //     user_groups: user_group
+    // };
+
+    return data;
 }
 
 export const verifyTrackIp = async (ip_address: string, account_id: string, project_id: string) => {
   const { data, error } = await supabase
     .from('project_users')
-    .upsert({ ip_address, account_id, project_id }, { onConflict: ['ip_address', 'account_id', 'project_id'] })
+    .upsert([{ ip_address, account_id, project_id }], { onConflict: 'ip_address,account_id,project_id' })
     .select('id')
     .single();
 
@@ -128,36 +166,43 @@ export const verifyTrackUser = async ({
     jwt,
     verify_endpoint
 }: {account_id: string, project_id: string, ip_address: string, external_user_id: string, jwt: string, verify_endpoint: string}) => {
-    console.log('verifyTrackUser', {account_id, project_id, ip_address, external_user_id, jwt, verify_endpoint});
+    // console.log('verifyTrackUser', {account_id, project_id, ip_address, external_user_id, jwt, verify_endpoint});
     try {
         // If the user is not authenticated, track them by IP address
+        console.time('verifyTrackUser');
         const isPublicProject = !jwt && ip_address
         if (isPublicProject) {
             return verifyTrackIp(ip_address, account_id, project_id);
         }
-
+        console.timeEnd('verifyTrackUser');
         const hashedJwt = hash(jwt);
 
         // Have we already seen this user?
+        console.time('getTrackedUser');
         let trackedUser = await getTrackedUser({hashedJwt, account_id, external_user_id});
         if (trackedUser) {
             return trackedUser;
         }
+        console.timeEnd('getTrackedUser');
 
         // Verify the user with the external service
+        console.time('verifyUser');
         const isVerifiedUser = await verifyUser({jwt, verify_endpoint, external_user_id});
         if (!isVerifiedUser) {
             return false;
         }
+        console.timeEnd('verifyUser');
 
         // Create a new project user and/or JWT record
+        console.time('trackUser');
         trackedUser = await trackUser({account_id, project_id, external_user_id, hashedJwt});
         if (!trackedUser) {
             return false;
         }
+        console.timeEnd('trackUser');
 
         return trackedUser.project_user_id;
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error in verifyUser function:', error);
         return { exists: false, tracked: false, error: error.message };
     }
@@ -258,7 +303,7 @@ async function createUserIfNotExists(userId: string, externalId: string, metadat
         }
 
         return { data: newUser, status: 'User created successfully' };  // Successfully created user
-    } catch (error) {
+    } catch (error: any) {
         console.error('Unexpected error:', error);
         return { error: error.message };
     }
