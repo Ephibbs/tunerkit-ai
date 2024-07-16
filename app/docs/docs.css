@@ -1,0 +1,116 @@
+/* Basic Reset */
+/* * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+    padding: 20px;
+} */
+
+/* Layout */
+/* .container {
+    /* width: 80%; */
+    /* margin: auto; */
+    /* padding: 20px;
+} */
+
+/* Headers */
+.doc-contents h1, h2, h3, h4, h5, h6 {
+    color: #000;
+}
+
+.doc-contents h1 {
+    margin-top: 20px;
+    font-size: 2em;
+    border-bottom: 1px solid #ccc;
+    display: block;
+    margin: 20px 0;
+}
+
+.doc-contents h2 {
+    margin-top: 18px;
+    font-size: 1.75em;
+    border-bottom: 1px solid #ccc;
+    display: block;
+    margin: 20px 0;
+}
+
+.doc-contents h3 {
+    margin-top: 15px;
+    font-size: 1.5em;
+    margin: 20px 0;
+}
+
+/* Text Elements */
+.doc-contents p {
+    margin: 20px 0;
+}
+
+.doc-contents a {
+    color: #0077cc;
+    text-decoration: none;
+}
+
+.doc-contents a:hover {
+    text-decoration: underline;
+}
+
+/* Lists */
+.doc-contents ul, ol {
+    margin-left: 20px;
+    padding-left: 20px;
+
+}
+
+.doc-contents ul li {
+    list-style-type: disc;
+    margin: 5px 0;
+}
+
+.doc-contents ol li {
+    list-style-type: decimal;
+    margin: 5px 0;
+}
+
+/* Code Styling */
+.doc-contents code {
+    /* font-family: 'Courier New', Courier, monospace; */
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.doc-contents pre {
+    /* padding: 2rem; */
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+/* Tables */
+.doc-contents table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.doc-contents th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+.doc-contents th {
+    background-color: #f0f0f0;
+}
+
+/* Responsive */
+/* @media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+} */

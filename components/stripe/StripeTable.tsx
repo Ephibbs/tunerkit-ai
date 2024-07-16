@@ -17,30 +17,23 @@ declare global {
 
 type Props = {
   user: User;
+  accountId: string;
 }
 
-const StripePricingTable = ({ user }: Props) => {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = "https://js.stripe.com/v3/pricing-table.js";
-    script.async = true;
+// Prod
+// const tableId = 'prctbl_1PVlenAioP3hJRa8dqzAzKf1';
+// const publicKey = "pk_live_51NK8XQAioP3hJRa8Ytpa5l3st8U2jX26UjUOkgMFfzw9q6B3H8PhKzuZpCbIUnFhW7PbhsmjBYlcium7tUkVPRHn00b6o0XCAC";
 
-    document.body.appendChild(script);
+// Dev
+const tableId = 'prctbl_1PUXAQAioP3hJRa8pe1JHLsm';
+const publicKey = "pk_test_51NK8XQAioP3hJRa8GZm4J9MYyeXmLmNNwaWulKxk9uRoQFEkox7h1ARBLYFjFqzE3vEhtPkdHnRlbRCGCCD3sbnl00XjlDMt6k";
 
-    return () => {
-      document.body.removeChild(script);
-    }
-  }, []);
+const StripePricingTable = ({ user, accountId }: Props) => {
+  
 
   return (
     <div className='flex flex-col w-full'>
-      <stripe-pricing-table
-        pricing-table-id="prctbl_1PVlenAioP3hJRa8dqzAzKf1"
-        publishable-key="pk_live_51NK8XQAioP3hJRa8Ytpa5l3st8U2jX26UjUOkgMFfzw9q6B3H8PhKzuZpCbIUnFhW7PbhsmjBYlcium7tUkVPRHn00b6o0XCAC"
-          client-reference-id={user.id}
-          customer-email={user.email}
-      >
-      </stripe-pricing-table>
+
     </div>
   );
 }

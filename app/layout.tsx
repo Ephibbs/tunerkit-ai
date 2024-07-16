@@ -23,7 +23,7 @@ export default function RootLayout({ children }: any) {
             <Navbar />
           </Suspense>
         </section>
-        <main className="flex flex-1 flex-col items-center py-16">
+        <main className="flex flex-1 flex-col items-center">
           {children}
         </main>
         <Footer />

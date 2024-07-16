@@ -59,7 +59,7 @@ export default async function Index({ params }: { params: { id: string } }) {
       <div className="flex flex-col gap-4 w-full justify-between items-center text-center max-w-lg m-auto mb-4 py-4 rounded-lg">
         <h1 className="text-gray-900 text-xl">Get Started</h1>
       </div>
-        <SaveOpenAIKeySection projectId={params.id || null} />
+      <SaveOpenAIKeySection projectId={params.id || null} />
       <div className="flex flex-col gap-4 w-full justify-between items-center text-center max-w-lg m-auto mt-8 mb-8 py-4 bg-gray-100 rounded-lg">
         <h1 className="font-bold">2. Import backless ai</h1>
         <CodeBlock copyText={'npm i backless-ai'}>

@@ -16,10 +16,18 @@ export default async function Index() {
     return redirect("/login");
   }
 
+  const { data: account, error } = await supabase
+    .from("members")
+    .select("account_id")
+    .eq("user_id", user.id)
+    .single();
+
+  const account_id = account?.account_id;
+
   return (
     <>
       <h1 className="text-4xl font-bold text-center pb-16 mt-16">Billing</h1>
-      <StripePricingTable user={user} />
+      {/* <StripePricingTable user={user} accountId={account_id} /> */}
       {/* <div className="flex flex-col items-center pt-16">
         <h2 className="text-xl font-bold text-center">Credit Balance</h2>
         <h3 className="text-2xl font-semibold">${user.credits || 0}</h3>

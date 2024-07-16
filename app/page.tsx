@@ -38,12 +38,12 @@ export default async function Index() {
   return (
     <div className="flex flex-col items-center pt-24">
       <div className="flex flex-col items-center gap-8 p-8 max-w-7xl w-full">
-        <div className="flex flex-col space-y-4 gap-2 w-full">
+        <div className="flex flex-col space-y-4 gap-2 w-full max-w-4xl">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-center">
-            UI components for your AI projects
+            Your AI frontend & backend, <br /> without the hassle.
           </h1>
           <p className="text-gray-600 text-lg text-center">
-            Focus on the UI. We'll handle the user management, rate-limiting, analytics, and everything else.
+            Focus on the UI. We'll handle the user management, storage, rate-limiting, analytics, and everything else.
           </p>
           <Link href="/login" className="w-fit m-auto">
             <Button className="w-full lg:w-fit text-lg py-5 px-5 my-3 bg-red-500 hover:bg-red-600">Start now</Button>

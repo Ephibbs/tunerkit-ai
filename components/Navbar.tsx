@@ -34,8 +34,8 @@ export default async function Navbar() {
   } = await supabase.from("credits").select("*").eq("user_id", user?.id ?? '').single()
 
   return (
-    <div className="w-full px-4 lg:px-40 py-4 gap-8 fixed backdrop-blur-xl border-b-2 border-b-gray-100">
-      <div className="flex m-auto w-full max-w-6xl items-center text-center justify-between">
+    <div className="w-full py-3 gap-8 fixed backdrop-blur-sm bg-slate-50 bg-opacity-80 border-b-2 border-b-gray-100 z-50">
+      <div className="flex m-auto w-full max-w-7xl items-center text-center justify-between px-4">
         <div className="flex gap-2 h-full">
           <Link href="/">
             <h2 className="font-bold pr-8">Backless AI</h2>
@@ -49,19 +49,19 @@ export default async function Navbar() {
             {/* <Link href="/logs">
               <Button variant={"ghost"}>Requests</Button>
             </Link> */}
-            {stripeIsConfigured && (
+            {/* {stripeIsConfigured && (
               <Link href="/app/billing">
                 <Button variant={"ghost"}>Billing</Button>
               </Link>
-            )}
+            )} */}
             {/* <Link href="/settings">
               <Button variant={"ghost"}>Settings</Button>
             </Link> */}
+            {/* <Link href="/docs">
+              <Button variant={"ghost"}>Docs</Button>
+            </Link> */}
             <Link href="/docs">
               <Button variant={"ghost"}>Docs</Button>
-            </Link>
-            <Link href="/components">
-              <Button variant={"ghost"}>Components</Button>
             </Link>
           </div>
         )}

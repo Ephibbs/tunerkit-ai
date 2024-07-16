@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
+import Aside from "./components/aside";
 
 const components = {
 
@@ -20,12 +21,11 @@ export default async function Index({
     children: React.ReactNode;
 }) {
     return (
-        <div className="w-full max-w-2xl mx-auto mt-8 flex flex-row">
-            <div className="flex flex-1 flex-col gap-2 px-2 md:max-w-48">
-            </div>
+        <div className="w-full max-w-7xl mx-auto flex flex-row">
+            <Aside/>
             <div
                 id="main-content"
-                className="flex flex-1 flex-col gap-2 px-2 flex-grow"
+                className="flex flex-1 flex-col gap-2 flex-grow pt-20"
             >
                 {children}
             </div>

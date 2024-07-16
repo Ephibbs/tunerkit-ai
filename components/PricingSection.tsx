@@ -50,26 +50,24 @@ const pricingOptions = [
     description:
       "Try it out.",
     features: [
-      "5 projects",
-      "1k requests / month",
+      "10k requests / month",
       "Up to 1k users",
     ],
     buttonText: "Get Started",
     bgColor: "bg-white",
   },
-  {
-    title: "Basic",
-    price: <span className="text-3xl">$19 <span className="text-sm">/ month</span></span>,
-    description:
-      "Perfect for individuals and startups.",
-    features: [
-      "Unlimited projects",
-      "20k requests / month",
-      "Up to 20k users",
-    ],
-    buttonText: "Get Started",
-    bgColor: "border-orange-500 border-2",
-  },
+  // {
+  //   title: "Basic",
+  //   price: <span className="text-3xl">$19 <span className="text-sm">/ month</span></span>,
+  //   description:
+  //     "Perfect for individuals and startups.",
+  //   features: [
+  //     "1M requests / month",
+  //     "Up to 200k users",
+  //   ],
+  //   buttonText: "Get Started",
+  //   bgColor: "border-orange-500 border-2",
+  // },
   // {
   //   title: "Advanced",
   //   price: <span className="text-4xl">$199 <span className="text-sm">/ month</span></span>,
@@ -89,12 +87,13 @@ const pricingOptions = [
     price: <span className="text-3xl">Contact us</span>,
     description: "For large businesses and teams.",
     features: [
-      "Unlimited projects",
+      // "Unlimited projects",
       "Unlimited requests",
+      "Unlimited users",
       "Custom features",
       "Fastest support",
     ],
     buttonText: "Choose Enterprise",
-    bgColor: "bg-white",
+    bgColor: "border-orange-500 border-2",
   },
 ];

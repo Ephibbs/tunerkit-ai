@@ -1,0 +1,100 @@
+---
+title: 'Chat'
+description: 'Integrate a conversational AI interface into your applications. This component can handle both predefined responses and dynamic AI-driven conversations, making it versatile for various use cases such as customer support, interactive FAQs, and more.'
+---
+
+{% ComponentPreview name="chat-example" / %}
+
+## Features
+
+- **AI-Driven Responses**: Utilize state-of-the-art AI to provide responsive, intelligent replies.
+- **Customizable UI**: Style and modify the chat interface to match your application’s design.
+- **Real-Time Interaction**: Engage users with real-time conversation capabilities.
+- **Support for Multiple AI Models**: Connect to various AI backends like OpenAI, Hugging Face, etc.
+
+## Installation
+
+First, ensure you have `backless-ai` installed:
+
+```bash
+npm install backless-ai
+```
+
+## Setup
+
+To use the Chat Component, import it from the library and integrate it into your application:
+
+```javascript
+import { ChatComponent } from 'backless-ai';
+
+function App() {
+  return (
+    <div className="App">
+      <ChatComponent apiKey="YOUR_API_KEY" />
+    </div>
+  );
+}
+
+export default App;
+```
+
+### Configuration Options
+
+You can configure the Chat Component using the following props:
+
+- **`apiKey`**: Your Backless AI API key.
+- **`theme`**: Customize the colors and fonts to match your brand.
+- **`onMessageSend`**: Function that triggers when a user sends a message.
+- **`initialMessages`**: Preload the chat with a set of messages.
+
+Example with custom options:
+
+```javascript
+<ChatComponent
+  apiKey="YOUR_API_KEY"
+  theme={{
+    backgroundColor: '#f0f0f0',
+    color: '#333'
+  }}
+  onMessageSend={(message) => console.log("Message sent:", message)}
+  initialMessages={[
+    { author: "ai", content: "Hello! How can I assist you today?" }
+  ]}
+/>
+```
+
+## Styling
+
+The Chat Component is designed to be fully customizable. Here’s how you can apply custom styles:
+
+```css
+.chat-container {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.chat-message {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 4px;
+}
+```
+
+## Usage Scenarios
+
+- **Customer Support**: Automate responses to common customer queries, reducing the need for live agents.
+- **Booking System**: Allow users to book appointments or make reservations through a conversational interface.
+- **Feedback Collection**: Use the chat interface to collect user feedback efficiently.
+
+## Best Practices
+
+- **Prompt Management**: Design conversation prompts that guide the user to provide useful information.
+- **Feedback Loops**: Regularly update the AI’s training data based on the interactions users have with your chatbot.
+- **Security**: Ensure all data passed through the chat is securely handled to protect user privacy.
+
+## Support
+
+If you encounter any issues or have questions about the Chat Component, please visit our [Support](/docs/support) page for assistance.
+
+Thank you for using the Chat Component from Backless AI. We are excited to see how you integrate it into your applications!
