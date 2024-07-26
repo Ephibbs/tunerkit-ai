@@ -17,7 +17,7 @@ export default function ExplainerSection() {
           <h3 className="text-2xl font-semibold">Install backless</h3>
         </div>
         <div className="text-center">
-          <CodeBlock copyText={'npm i backless-ai'}>
+          <CodeBlock copyText={'npm i backless-ai'} language="bash">
             <span className="shrink-0 text-gray-500 user-select-none">$</span>
             <span className="flex-1">
               <span>npm i {' '}</span>

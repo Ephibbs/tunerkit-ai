@@ -18,11 +18,6 @@ export const getProjectAccount = async (project_id: string) => {
       accounts:account_id (
         id,
         plan
-      ),
-      user_groups:user_group_id (
-        id,
-        type,
-        metadata
       )
     `)
     .eq('id', project_id)
@@ -108,52 +103,67 @@ const getTrackedUser = async ({hashedJwt, account_id, external_user_id}: {hashed
     }
 }
 
-const verifyUser = async ({jwt, verify_endpoint, external_user_id}: {jwt: string, verify_endpoint: string, external_user_id: string}) => {
-    const response = await fetch(verify_endpoint, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`
+async function verifySupabaseUser({supabaseUrl, supabaseKey, jwt, external_user_id}: any) {
+    try {
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        const { data: { user } } = await supabase.auth.getUser(jwt);
+        // console.log('User:', user, "id:", user?.id, external_user_id);
+
+        if (!user) {
+            return false;
         }
-    });
 
-    if (!response.ok) {
-        // If the response is not OK, log the error and return the negative status
-        console.error('Failed to verify user:', response.statusText);
-        return false
-    }
+        if (user.id !== external_user_id) {
+            return false;
+        }
 
-    const data = await response.json();
-
-    // Verify the user_id in your application to prevent JWT substitution attacks
-    if (data.sub !== external_user_id) {
+        return user;
+    } catch (error: any) {
+        console.error('Error verifying user:', error);
         return false;
     }
+}
 
-    return true;
+const verifyUser = async ({jwt, user_auth, external_user_id}: {jwt: string, user_auth: any, external_user_id: string}) => {
+    if (user_auth.type === 'supabase') {
+        return await verifySupabaseUser({
+            jwt, 
+            external_user_id,
+            supabaseUrl: user_auth.metadata.url,
+            supabaseKey: user_auth.metadata.key
+        });
+    }
+
+    return false;
 }
 
 export const trackUser = async ({account_id, project_id, external_user_id, hashedJwt}: {account_id: string, project_id: string, external_user_id: string, hashedJwt: string}) => {
     const { data: projectUser, error: upsertError } = await supabase
         .from('project_users')
-        .upsert([{ external_user_id, account_id, project_id }]);
+        .upsert([{ external_user_id, account_id, project_id }])
+        .select('id')
+        .single();
 
     if (upsertError) {
         console.error('Error upserting project user:', upsertError);
         return false;
     }
 
-    const project_user_id = (projectUser as any).id;
+    console.log('Upserted project user:', projectUser);
+
+    const project_user_id = (projectUser as any)?.id;
 
     // Insert the JWT into the 'jwts' table if verification is successful
     const { data: insertData, error: insertError } = await supabase
         .from('jwts')
-        .insert([{ external_user_id, account_id, encrypted_token: hashedJwt, project_user_id }]);
+        .upsert([{ external_user_id, account_id, encrypted_token: hashedJwt, project_user_id }]);
 
     if (insertError) {
         console.error('Error inserting JWT:', insertError);
         return false;
     }
+
+    console.log('Inserted JWT:', insertData);
 
     return project_user_id;
 }
@@ -164,8 +174,8 @@ export const verifyTrackUser = async ({
     ip_address,
     external_user_id,
     jwt,
-    verify_endpoint
-}: {account_id: string, project_id: string, ip_address: string, external_user_id: string, jwt: string, verify_endpoint: string}) => {
+    user_auth
+}: {account_id: string, project_id: string, ip_address: string, external_user_id: string, jwt: string, user_auth: object}) => {
     // console.log('verifyTrackUser', {account_id, project_id, ip_address, external_user_id, jwt, verify_endpoint});
     try {
         // If the user is not authenticated, track them by IP address
@@ -177,34 +187,34 @@ export const verifyTrackUser = async ({
         console.timeEnd('verifyTrackUser');
         const hashedJwt = hash(jwt);
 
-        // Have we already seen this user?
+        // Have we already seen this hashedJwt?
         console.time('getTrackedUser');
-        let trackedUser = await getTrackedUser({hashedJwt, account_id, external_user_id});
-        if (trackedUser) {
-            return trackedUser;
+        let trackedUserId = await getTrackedUser({hashedJwt, account_id, external_user_id});
+        if (trackedUserId) {
+            return trackedUserId;
         }
         console.timeEnd('getTrackedUser');
 
         // Verify the user with the external service
         console.time('verifyUser');
-        const isVerifiedUser = await verifyUser({jwt, verify_endpoint, external_user_id});
+        const isVerifiedUser = await verifyUser({jwt, user_auth, external_user_id});
         if (!isVerifiedUser) {
             return false;
         }
         console.timeEnd('verifyUser');
 
         // Create a new project user and/or JWT record
-        console.time('trackUser');
-        trackedUser = await trackUser({account_id, project_id, external_user_id, hashedJwt});
-        if (!trackedUser) {
+        console.time('trackedUser');
+        trackedUserId = await trackUser({account_id, project_id, external_user_id, hashedJwt});
+        console.timeEnd('trackedUser');
+        if (!trackedUserId) {
             return false;
         }
-        console.timeEnd('trackUser');
 
-        return trackedUser.project_user_id;
+        return trackedUserId;
     } catch (error: any) {
         console.error('Error in verifyUser function:', error);
-        return { exists: false, tracked: false, error: error.message };
+        return false;
     }
 };
 

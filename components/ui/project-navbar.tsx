@@ -15,14 +15,14 @@ export const ProjectNavbar = ({projectName, projectId}: {projectName: string, pr
             </Button>
         </Link>
         <div className="flex flex-row gap-2 align-middle text-center items-center pb-4">
-            <h1 className="text-xl">{projectName}</h1>
+            <h1 className="text-xl font-bold">{projectName}</h1>
             <div className="lg:flex flex-row gap-2">
                 <Link href={`/app/projects/${projectId}`} className={`${pathname === `/app/projects/${projectId}` ? "text-blue-500" : ""}`}>
                     <Button variant={"ghost"}>Dashboard</Button>
                 </Link>
-                <Link href={`/app/projects/${projectId}/requests`} className={`${pathname === `/app/projects/${projectId}/requests` ? "text-blue-500" : ""}`}>
-                    <Button variant={"ghost"}>Requests</Button>
-                </Link>
+                {/* <Link href={`/app/projects/${projectId}/requests`} className={`${pathname === `/app/projects/${projectId}/requests` ? "text-blue-500" : ""}`}>
+                    <Button variant={"ghost"}>Usage</Button>
+                </Link> */}
                 <Link href={`/app/projects/${projectId}/settings`} className={`${pathname === `/app/projects/${projectId}/settings` ? "text-blue-500" : ""}`}>
                     <Button variant={"ghost"}>
                         Settings

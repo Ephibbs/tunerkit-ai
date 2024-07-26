@@ -72,11 +72,10 @@ const getVerifyUrl = (type: string, options: any) => {
   throw new Error(`Invalid type: ${type}`);
 }
 
-const createProjectInSupabase = async (supabase: any, name: string, app_user_group_id: string | null) => {
+const createProjectInSupabase = async (supabase: any, name: string, user_auth: string | null) => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  console.log('user', user);
   const { data: { account_id }, error1 } = await supabase
     .from('members')
     .select('account_id')
@@ -85,10 +84,9 @@ const createProjectInSupabase = async (supabase: any, name: string, app_user_gro
 
   if (error1) throw new Error(error1 as string);
 
-  console.log('name', name);
   const { data, error } = await supabase
     .from('projects')
-    .insert([{ name, user_group_id: null, account_id }])
+    .insert([{ name, user_auth: null, account_id }])
     .select();
 
   if (error) throw new Error(error.message);

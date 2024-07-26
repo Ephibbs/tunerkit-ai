@@ -30,12 +30,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { createClient } from "@/utils/supabase/client"
+import { useToast } from "@/components/ui/use-toast";
 
-export function RateLimitSetter({projectId, rateLimit, ratePeriod, unit, type}: any) {
+export function RateLimitSetter({title, projectId, rateLimit, ratePeriod, unit, type}: any) {
+  const { toast } = useToast();
   const supabase = createClient();
   const [value, setValue] = useState(rateLimit)
   const [timeUnit, setTimeUnit] = useState(ratePeriod)
-  const [rateUnit, setRateUnit] = useState(unit)
+  const [rateUnit, setRateUnit] = useState('requests')
+  const [firstRender, setFirstRender] = useState(true)
 
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
@@ -60,6 +63,11 @@ export function RateLimitSetter({projectId, rateLimit, ratePeriod, unit, type}: 
         rate_period: timeUnit,
       }).eq('id', projectId)
     }
+    toast({
+      title: 'Rate limit saved',
+      description: 'Your rate limit has been saved',
+      // status: 'success'
+    });
     console.log('Value saved:', projectId, value, timeUnit, rateUnit, result);
   }
 
@@ -72,6 +80,10 @@ export function RateLimitSetter({projectId, rateLimit, ratePeriod, unit, type}: 
   };
 
   useEffect(() => {
+    if (firstRender) {
+      setFirstRender(false);
+      return;
+    }
     setSaveTimer();
   }, [value, timeUnit, rateUnit]);
 
@@ -79,6 +91,7 @@ export function RateLimitSetter({projectId, rateLimit, ratePeriod, unit, type}: 
 
   return (
     <div className="bg-background rounded-lg border p-4 w-full max-w-md">
+      <h2 className="font-semibold text-lg mb-4">{title}</h2>
       <div className="grid gap-3">
         <div className="flex items-center justify-center gap-2">
           {
@@ -124,7 +137,7 @@ export function RateLimitSetter({projectId, rateLimit, ratePeriod, unit, type}: 
             </SelectContent>
           </Select>
         </div>
-        {
+        {/* {
           rateUnit === 'requests' &&
           <button onClick={() => setRateUnit('cents')} className="text-blue-500 p-1 ml-2 rounded-md text-xs">
             limit by cost
@@ -137,7 +150,7 @@ export function RateLimitSetter({projectId, rateLimit, ratePeriod, unit, type}: 
               limit by requests
             </button>
           </>
-        }
+        } */}
       </div>
     </div>
   )

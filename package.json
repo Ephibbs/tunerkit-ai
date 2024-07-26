@@ -40,11 +40,12 @@
     "@supabase/supabase-js": "^2.40.0",
     "@types/formidable": "^3.4.2",
     "@types/node-fetch": "^2.6.4",
+    "@types/unist": "^3.0.2",
     "@vercel/analytics": "^1.2.2",
     "@vercel/blob": "^0.22.1",
     "autoprefixer": "10.4.14",
     "axios": "^1.6.8",
-    "backless-ai": "^0.0.0",
+    "backless-ai": "^0.0.6",
     "bufferutil": "^4.0.8",
     "busboy": "^1.6.0",
     "class-variance-authority": "^0.7.0",
@@ -60,7 +61,9 @@
     "node": "^18.20.0",
     "node-fetch": "2",
     "npm": "^10.5.0",
+    "openai": "^4.52.7",
     "postcss": "8.4.24",
+    "posthog-js": "^1.150.0",
     "prismjs": "^1.29.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -79,10 +82,13 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.13",
     "@types/busboy": "^1.5.0",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "20.3.1",
     "@types/react": "18.2.12",
     "@types/react-dom": "18.2.5",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "encoding": "^0.1.13"
   }
 }

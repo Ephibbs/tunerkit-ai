@@ -1,85 +1,103 @@
 ---
-title: 'Welcome to Backless AI Documentation'
-description: 'Get started with Backless AI to effortlessly integrate AI functionalities into your applications.'
+title: 'Backless AI'
+description: 'Get started with Backless AI to quickly integrate AI functionalities into your apps.'
 ---
 
-# Welcome to Backless AI Documentation
+Easily add powerful AI functionality to your web and mobile applications with Backless AI, a UI library for integrating AI features and applications with rate-limiting, user management, observability, and more built in.
 
-Backless AI simplifies the integration of advanced AI functionalities into your applications, handling all the complexities of AI model management so you can focus on creating outstanding user experiences.
+## Overview
 
-## What is Backless AI?
+Backless AI provides a collection of easy-to-use AI functions that you can seamlessly integrate into your projects. It simplifies the process of adding AI capabilities to your applications, allowing you to focus on building great user experiences.
 
-Backless AI is a powerful, easy-to-use npm library that lets developers add AI capabilities to their applications without needing to manage a backend. It provides ready-made components and API access to various AI models, enabling functionalities such as chatbots, image recognition, and more directly from the frontend.
+## Key Features
 
-## Getting Started
+### 1. Text Completion
+- Generate AI-powered text completions
+- Functions: `getCompletion`, `getCompletionStream`
 
-Before diving into the capabilities of Backless AI, you'll need to set it up. Here's how you can get started quickly:
+### 2. Object Creation
+- Generate json objects 
+- Function: `getCompletion`, `getCompletionStream`
 
-### Installation
+### 3. Text-to-Speech (TTS)
+- Convert text to natural-sounding speech
+- Function: `getSpeech`
 
-```bash
-npm install backless-ai
+### Basic Usage
+
+```javascript
+import { getPublicClient } from 'backless-ai';
+
+const client = getPublicClient('your-project-id');
+
+// Example: Send a chat completion request
+try {
+  const response = await client.getCompletion({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: "You are a helpful assistant." },
+      { role: "user", content: "Hello, AI!" }
+    ]
+  });
+  console.log(response);
+} catch (error) {
+  console.error("An error occurred:", error.message);
+}
 ```
 
-### Quick Setup
+### Streaming Completions
 
-Here's a quick setup guide to get Backless AI running in your project:
+```javascript
+import { getPublicClient } from 'backless-ai';
 
-1. **Import the library:**
+const client = getPublicClient('your-project-id');
 
-   ```javascript
-   import BacklessAI from 'backless-ai';
-   ```
+const onData = (data) => {
+  console.log("Received data:", data);
+};
 
-2. **Initialize with your API key:**
+try {
+  await client.getCompletionStream(
+    {
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: "You are a helpful assistant." },
+        { role: "user", content: "Tell me a story." }
+      ]
+    },
+    onData
+  );
+} catch (error) {
+  console.error("An error occurred:", error.message);
+}
+```
 
-   ```javascript
-   const ai = new BacklessAI({
-     apiKey: 'YOUR_API_KEY'
-   });
-   ```
+## Advanced Features
 
-3. **Start using AI components:**
+- **Multiple Model Support**: Access various AI models through our backend
+- **Customizable Timeout**: Set custom timeouts for streaming responses
 
-   ```javascript
-   ai.chatbot("Hello, how can I help you today?");
-   ```
+## Error Handling
 
-For detailed installation and setup instructions, including API key configuration and advanced options, visit our [Installation Guide](/docs/installation).
+The library provides detailed error messages and handles network issues gracefully. Always wrap API calls in try-catch blocks for proper error handling, as demonstrated in the usage examples above.
 
-## Core Features
+## API Reference
 
-Backless AI comes packed with features designed to enhance any application. Here's what you can do:
+### Client Methods
 
-- **User Authentication**: Easily add authentication to your apps.
-- **AI-Powered Chat Components**: Integrate chat functionalities with optional local AI.
-- **Image Analysis**: Use AI to understand and interact with images.
-- **Custom AI Flows**: Customize AI behaviors to suit your specific needs.
+The client returned by `getPublicClient` or `getClientFromSupabase` provides the following methods:
 
-For a full list of features and how to use them, check out our [Features](/docs/features) section.
+- `getCompletion(body: ChatCompletionRequest): Promise<any>`
+- `getCompletionStream(body: ChatCompletionRequest, onData: (data: string) => void, config?: { timeout?: number }): Promise<void>`
+- `getSpeech(body: CreateSpeechRequest): Promise<any>`
 
-## Ready-Made Components
+### Client Initialization Functions
 
-Jumpstart your development with our library of pre-built components. These include:
-
-- Chat App
-- Speech to Text
-- Sentiment Analysis
-
-Explore all components in our [Components Guide](/docs/components).
-
-## Example Applications
-
-Learn by example with our detailed guides on building applications using Backless AI:
-
-- **AI Chatbot**: Learn how to build an intelligent chatbot.
-- **Image Recognition App**: Create an app that can identify and categorize images.
-- **Customer Support Tool**: Develop a tool that uses sentiment analysis to understand customer emotions.
-
-Discover more examples in our [Example Applications](/docs/examples) section.
+- `getPublicClient(projectId: string): Client | null`
+- `getClientFromSupabase(supabase: any, projectId: string): Client | null`
 
 ## Support
 
-Run into issues or have questions? Check out our [Support](/docs/support) page for FAQs, contact information, and more.
+For detailed API documentation, examples, and support, please visit our [official documentation](https://docs.backless.ai).
 
-Thank you for choosing Backless AI. We're excited to see what you build!
+Get started with Backless AI today and transform your applications with cutting-edge AI capabilities!

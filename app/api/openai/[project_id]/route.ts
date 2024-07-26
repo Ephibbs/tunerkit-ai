@@ -2,6 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 import fetcher from 'node-fetch';
 import { NextRequest, NextResponse } from 'next/server';
+import OpenAI from "openai";
 import modelEndpoints from '@/utils/model-endpoints';
 import { saveLogToSupabase } from '@/utils/log-helper';
 import { verifyTrackUser, convertRatePeriod, getProjectAccount, getAccountRateLimit, getOpenaiKey } from '@/utils/user-helpers';
@@ -19,10 +20,12 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 type EndpointKeys = keyof typeof modelEndpoints;
 
 async function checkInput({
+  request,
   project_id,
   jwt,
   endpointKey
 }: {
+  request: NextRequest;
   project_id: string | null;
   jwt: string | null;
   endpointKey: string | null;
@@ -55,13 +58,32 @@ async function checkInput({
       }
     });
   }
-  if (project_account.user_group_id && !jwt) {
+
+  if (project_account.user_auth && !jwt) {
     return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: {
         'Content-Type': 'application/json'
       }
     });
+  }
+  
+  // Retrieve CORS domains from the project account
+  const corsDomains = project_account.cors_domains || [];
+
+  // Get the origin of the request
+  const requestOrigin = request.headers.get('Origin');
+
+  // If CORS domains are specified, check that the request origin is one of the allowed domains
+  if (corsDomains.length > 0 && requestOrigin) {
+    if (!corsDomains.includes(requestOrigin)) {
+      return new NextResponse(JSON.stringify({ error: 'Origin not allowed' }), {
+        status: 403,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    }
   }
 
   return { project_account, endpoint };
@@ -191,7 +213,6 @@ async function handleOpenAICall({ account_id, project_user_id, project_id, endpo
     };
 
     if (body.stream) {
-      console.log('streaming response');
       return handleStreamingResponse(response, logData);
     } else {
       return await handleNonStreamingResponse(response, logData);
@@ -241,22 +262,56 @@ export async function OPTIONS(request: Request): Promise<NextResponse> {
   });
 }
 
-export async function POST(request: Request): Promise<NextResponse> {
+async function handleCreateSpeechCall({ account_id, project_user_id, project_id, endpoint, body }: any): Promise<NextResponse> {
+  console.time(' - getOpenaiKey');
+  const openaiKey = await getOpenaiKey(account_id);
+  console.timeEnd(' - getOpenaiKey');
+  const openai = new OpenAI({
+    apiKey: openaiKey as string
+  });
+  const mp3 = await openai.audio.speech.create(
+    body
+  );
+
+  // Convert ArrayBuffer to Buffer
+  const buffer = Buffer.from(await mp3.arrayBuffer());
+
+  // Return the MP3 buffer directly
+  return new NextResponse(buffer, {
+    status: 200,
+    headers: {
+      'Content-Type': 'audio/mp3'
+    }
+  });
+}
+
+async function handleCreateTranscriptionCall({ account_id, project_user_id, project_id, endpoint, body }: any): Promise<NextResponse> {
+  console.time(' - getOpenaiKey');
+  const openaiKey = await getOpenaiKey(account_id);
+  console.timeEnd(' - getOpenaiKey');
+  const openai = new OpenAI({
+    apiKey: openaiKey as string
+  });
+  const transcription = await openai.audio.transcriptions.create(body);
+
+  return new NextResponse(JSON.stringify(transcription), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
   const jwt = request?.headers?.get('Authorization')?.split('Bearer ')[1];
   const external_user_id = request?.headers?.get('X-User-Id');
   const project_id = request?.headers?.get('X-Project-Id');
   const endpointKey = request?.url.split('/').pop() as EndpointKeys;
 
-  // console.log('external_user_id', external_user_id);
-  // console.log('project_id', project_id);
-  // console.log('jwt', jwt);
-  // console.log('endpointKey', endpointKey);
-  // console.log('body', body);
-
   // Check if the request is valid
   console.time('checkInput');
-  const inputCheck = await checkInput({ project_id, jwt: jwt || '', endpointKey });
+  const inputCheck = await checkInput({ request, project_id, jwt: jwt || '', endpointKey });
   if (inputCheck instanceof NextResponse) {
     return inputCheck;
   }
@@ -272,7 +327,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     ip_address: ip || '',
     external_user_id: external_user_id || '',
     jwt: jwt || '',
-    verify_endpoint: project_account.verify_endpoint
+    user_auth: project_account.user_auth
   });
   if (!project_user_id) {
     return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
@@ -303,7 +358,19 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   // Make the OpenAI call
   console.time('handleOpenAICall');
-  const response = await handleOpenAICall({ account_id: project_account.account_id, project_user_id, project_id, endpoint, body });
+  let response = new NextResponse(JSON.stringify({ error: 'Invalid endpoint' }), {
+    status: 400,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  if (endpointKey === 'create_chat_completion') {
+    response = await handleOpenAICall({ account_id: project_account.account_id, project_user_id, project_id, endpoint, body });
+  } else if (endpointKey === 'create_speech') {
+    response = await handleCreateSpeechCall({ account_id: project_account.account_id, project_user_id, project_id, endpoint, body });
+  } else if (endpointKey === 'create_transcription') {
+    response = await handleCreateTranscriptionCall({ account_id: project_account.account_id, project_user_id, project_id, endpoint, body });
+  }
   console.timeEnd('handleOpenAICall');
 
   return response;

@@ -50,7 +50,7 @@ export const VercelInviteUserEmail = ({
     <Html>
       <Head />
       <Preview>{previewText}</Preview>
-      <Tailwind>
+      {/* <Tailwind> */}
         <Body className="bg-white my-auto mx-auto font-sans px-2">
           <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] max-w-[465px]">
             <Section className="mt-[32px]">
@@ -80,7 +80,7 @@ export const VercelInviteUserEmail = ({
               <strong>Vercel</strong>.
             </Text>
             <Section>
-              <Row>
+              {/* <Row>
                 <Column align="right">
                   <Img
                     className="rounded-full"
@@ -105,7 +105,7 @@ export const VercelInviteUserEmail = ({
                     height="64"
                   />
                 </Column>
-              </Row>
+              </Row> */}
             </Section>
             <Section className="text-center mt-[32px] mb-[32px]">
               <Button
@@ -134,7 +134,7 @@ export const VercelInviteUserEmail = ({
             </Text>
           </Container>
         </Body>
-      </Tailwind>
+      {/* </Tailwind> */}
     </Html>
   );
 };

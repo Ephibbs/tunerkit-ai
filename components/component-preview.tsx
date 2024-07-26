@@ -6,8 +6,14 @@ import { RotateCcw } from "lucide-react";
 import { ComponentName, registry } from "@/app/docs/registry/index";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ComponentWrapper from "@/components/component-wrapper";
+import { GetStaticProps } from 'next';
 import {Button} from "@/components/ui/button";
 import { Icons } from "@/components/icons";
+import { Fence } from "@/components/code";
+import { getComponentPreviewCode } from "@/components/code-preview";
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { a11yDark, stackoverflowDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { CopyButton } from "@/components/copy-button";
 
 interface ComponentPreviewProps extends React.HTMLAttributes<HTMLDivElement> {
     name: ComponentName;
@@ -24,8 +30,7 @@ export function ComponentPreview({
     ...props
 }: ComponentPreviewProps) {
     const [key, setKey] = React.useState(0); // State to trigger re-render of preview
-    const Codes = React.Children.toArray(children) as React.ReactElement[];
-    const Code = Codes[0]; // first child
+    const [sourceCode, setSourceCode] = React.useState<string | null>(null);
 
     const Preview = React.useMemo(() => {
         const Component = registry[name]?.component;
@@ -46,10 +51,18 @@ export function ComponentPreview({
         return <Component />;
     }, [name, key]);
 
-    // const Code = React.useMemo(() => {
-    //     const Codes = React.Children.toArray(Preview) as React.ReactElement[];
-    //     return Codes[0].props.children;
-    // }, [Preview]);
+    React.useEffect(() => {
+        async function fetchSourceCode() {
+            try {
+                const code = await getComponentPreviewCode(name);
+                setSourceCode(code);
+            } catch (error) {
+                console.error('Failed to fetch source code:', error);
+            }
+        }
+
+        fetchSourceCode();
+    }, [name]);
 
     return (
         <div
@@ -100,9 +113,12 @@ export function ComponentPreview({
                     </ComponentWrapper>
                 </TabsContent>
                 <TabsContent value="code">
-                    <div className="flex flex-col space-y-4">
-                        <div className="w-full rounded-md [&_pre]:my-0 [&_pre]:max-h-[350px] [&_pre]:overflow-auto">
-                            {Code}
+                    <div className="flex flex-col space-y-4 rounded-md overflow-">
+                        <div className="w-full [&_pre]:my-0 [&_pre]:max-h-[350px] [&_pre]:overflow-auto relative">
+                            <CopyButton value={sourceCode as string} className="absolute right-4 top-0 z-10 ml-4 flex items-center rounded-lg px-3 py-1 text-white" />
+                            <SyntaxHighlighter language={'javascript'} style={stackoverflowDark} wrapLongLines={true} showLineNumbers>
+                                {sourceCode as string}
+                            </SyntaxHighlighter>
                         </div>
                     </div>
                 </TabsContent>

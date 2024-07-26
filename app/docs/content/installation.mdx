@@ -1,19 +1,9 @@
 ---
-title: 'Welcome to Backless AI Documentation'
+title: 'Installation'
 description: 'Get started with Backless AI to effortlessly integrate AI functionalities into your applications.'
 ---
 
-# Welcome to Backless AI Documentation
-
-Backless AI simplifies the integration of advanced AI functionalities into your applications, handling all the complexities of AI model management so you can focus on creating outstanding user experiences.
-
-## What is Backless AI?
-
-Backless AI is a powerful, easy-to-use npm library that lets developers add AI capabilities to their applications without needing to manage a backend. It provides ready-made components and API access to various AI models, enabling functionalities such as chatbots, image recognition, and more directly from the frontend.
-
 ## Getting Started
-
-Before diving into the capabilities of Backless AI, you'll need to set it up. Here's how you can get started quickly:
 
 ### Installation
 
@@ -21,65 +11,22 @@ Before diving into the capabilities of Backless AI, you'll need to set it up. He
 npm install backless-ai
 ```
 
-### Quick Setup
+### Client Initialization
 
-Here's a quick setup guide to get Backless AI running in your project:
+Backless AI provides two methods to initialize the client:
 
-1. **Import the library:**
+1. For public (unauthenticated) access:
+Users of public projects are tracked through their IP addresses.
+```javascript
+import { getPublicClient } from 'backless-ai';
 
-   ```javascript
-   import BacklessAI from 'backless-ai';
-   ```
+const client = getPublicClient('your-project-id');
+```
 
-2. **Initialize with your API key:**
+2. For authenticated access with Supabase:
+```javascript
+import { getClientFromSupabase } from 'backless-ai';
+import { supabase } from './supabaseClient'; // Your Supabase client
 
-   ```javascript
-   const ai = new BacklessAI({
-     apiKey: 'YOUR_API_KEY'
-   });
-   ```
-
-3. **Start using AI components:**
-
-   ```javascript
-   ai.chatbot("Hello, how can I help you today?");
-   ```
-
-For detailed installation and setup instructions, including API key configuration and advanced options, visit our [Installation Guide](/docs/installation).
-
-## Core Features
-
-Backless AI comes packed with features designed to enhance any application. Here's what you can do:
-
-- **User Authentication**: Easily add authentication to your apps.
-- **AI-Powered Chat Components**: Integrate chat functionalities with optional local AI.
-- **Image Analysis**: Use AI to understand and interact with images.
-- **Custom AI Flows**: Customize AI behaviors to suit your specific needs.
-
-For a full list of features and how to use them, check out our [Features](/docs/features) section.
-
-## Ready-Made Components
-
-Jumpstart your development with our library of pre-built components. These include:
-
-- Chat App
-- Speech to Text
-- Sentiment Analysis
-
-Explore all components in our [Components Guide](/docs/components).
-
-## Example Applications
-
-Learn by example with our detailed guides on building applications using Backless AI:
-
-- **AI Chatbot**: Learn how to build an intelligent chatbot.
-- **Image Recognition App**: Create an app that can identify and categorize images.
-- **Customer Support Tool**: Develop a tool that uses sentiment analysis to understand customer emotions.
-
-Discover more examples in our [Example Applications](/docs/examples) section.
-
-## Support
-
-Run into issues or have questions? Check out our [Support](/docs/support) page for FAQs, contact information, and more.
-
-Thank you for choosing Backless AI. We're excited to see what you build!
+const client = getClientFromSupabase(supabase, 'your-project-id');
+```

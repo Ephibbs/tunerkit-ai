@@ -11,6 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import Link from "next/link";
+import Image from 'next/image';
+import Logo from '@/public/coupons-svgrepo-com.svg';
 import { Button } from "./ui/button";
 import React from "react";
 import { Database } from "@/types/supabase";
@@ -34,11 +36,12 @@ export default async function Navbar() {
   } = await supabase.from("credits").select("*").eq("user_id", user?.id ?? '').single()
 
   return (
-    <div className="w-full py-3 gap-8 fixed backdrop-blur-sm bg-slate-50 bg-opacity-80 border-b-2 border-b-gray-100 z-50">
-      <div className="flex m-auto w-full max-w-7xl items-center text-center justify-between px-4">
+    <div className="w-full py-3 gap-8 fixed backdrop-blur-sm bg-slate-50 bg-opacity-80 border-b-gray-100 z-50">
+      <div className="flex m-auto w-full max-w-6xl items-center text-center justify-between px-4">
         <div className="flex gap-2 h-full">
-          <Link href="/">
-            <h2 className="font-bold pr-8">Backless AI</h2>
+          <Link href="/" className="flex items-center gap-1">
+            <Image src={Logo} alt="Backless AI" width={30} height={30} />
+            <h2 className="font-bold text-lg pr-8">Backless</h2>
           </Link>
         </div>
         {user && (
@@ -63,6 +66,9 @@ export default async function Navbar() {
             <Link href="/docs">
               <Button variant={"ghost"}>Docs</Button>
             </Link>
+            <Link href="/support">
+              <Button variant={"ghost"}>Support</Button>
+            </Link>
           </div>
         )}
         <div className="flex gap-4 lg:ml-auto">
@@ -83,7 +89,7 @@ export default async function Navbar() {
               )} */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="cursor-pointer">
-                  <AvatarIcon height={24} width={24} className="text-primary" />
+                  <AvatarIcon height={24} width={24} className="text-primary color-[#8CAAFF]" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
                   <DropdownMenuLabel className="text-primary text-center overflow-hidden text-ellipsis">{user.email}</DropdownMenuLabel>

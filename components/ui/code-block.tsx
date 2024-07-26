@@ -1,8 +1,9 @@
 'use client';
-
 import React, { useState } from 'react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { a11yDark as dark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
-export default function CodeBlock({children, className, copyText}: {children: React.ReactNode, className?: string, copyText: string}) {
+function CodeBlock({children, className, copyText, language}: {children: React.ReactNode, className?: string, copyText: string, language: string}) {
     const [isCopied, setIsCopied] = useState(false);
 
     function copyToClipboard() {
@@ -14,11 +15,11 @@ export default function CodeBlock({children, className, copyText}: {children: Re
     }
 
     return (
-        <code className={`inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg p-4 pl-6 ${className}`}>
-            <span className="flex gap-4">
-                {children}
-            </span>
-            <svg className="shrink-0 h-5 w-5 transition text-gray-500 hover:text-white cursor-pointer"
+        <div className={`relative  ${className}`}>
+            <SyntaxHighlighter language={language} style={dark} codeTagProps={{className: className}}>
+                {children as string}
+            </SyntaxHighlighter>
+            <svg className="shrink-0 h-5 w-5 transition text-gray-500 hover:text-white cursor-pointer absolute right-2 top-1/2 transform -translate-y-1/2"
                 xmlns="http://www.w3.org/2000/svg"
                 onClick={copyToClipboard}
                 viewBox="0 0 20 20"
@@ -35,6 +36,18 @@ export default function CodeBlock({children, className, copyText}: {children: Re
                     </>
                 )}
             </svg>
-        </code>
+        </div>
     );
 }
+
+// CodeBlock.scheme = {
+//     render: CodeBlock,
+//     attributes: {
+//         language: {
+//             type: String,
+//         },
+//         content: { type: String },
+//     },
+// };
+
+export default CodeBlock;

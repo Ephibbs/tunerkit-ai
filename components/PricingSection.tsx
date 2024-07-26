@@ -45,16 +45,27 @@ export default function PricingSection() {
 
 const pricingOptions = [
   {
-    title: "Tiny",
+    title: "Nano",
     price: <span className="text-3xl">Free</span>,
     description:
-      "Try it out.",
+      "For individuals and side projects.",
     features: [
-      "10k requests / month",
-      "Up to 1k users",
+      "5k requests / month",
     ],
     buttonText: "Get Started",
     bgColor: "bg-white",
+  },
+  {
+    title: "Tiny",
+    price: <span className="text-3xl">$19 <span className="text-lg">/ month</span></span>,
+    description:
+      "For startups and small teams.",
+    features: [
+      "100k requests / month",
+      "Fast support"
+    ],
+    buttonText: "Get Started",
+    bgColor: "border-orange-500 border-4",
   },
   // {
   //   title: "Basic",
@@ -85,7 +96,7 @@ const pricingOptions = [
   {
     title: "Enterprise",
     price: <span className="text-3xl">Contact us</span>,
-    description: "For large businesses and teams.",
+    description: "For large teams and businesses.",
     features: [
       // "Unlimited projects",
       "Unlimited requests",
@@ -94,6 +105,6 @@ const pricingOptions = [
       "Fastest support",
     ],
     buttonText: "Choose Enterprise",
-    bgColor: "border-orange-500 border-2",
+    bgColor: "bg-white",
   },
 ];

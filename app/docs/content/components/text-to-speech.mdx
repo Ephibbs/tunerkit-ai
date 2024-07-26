@@ -1,0 +1,45 @@
+---
+title: 'Text to Speech'
+description: 'Easily integrate high-quality speech synthesis into your React applications. This feature allows you to convert text into natural-sounding speech, enhancing user experience in accessibility, narration, and interactive applications.'
+---
+
+{% ComponentPreview name="tts-example" / %}
+
+## Features
+
+- **High-Quality Voices**: Choose from a variety of voices to find the one that best suits your application’s needs.
+- **Custom Voice Settings**: Adjust the speed and pitch of the voice to match your desired output.
+- **Simple API**: Our straightforward API makes it easy to implement and use.
+- **Wide Language Support**: Support for multiple languages to cater to a global audience.
+
+## Installation
+
+Ensure that you have `backless-ai` installed:
+
+```bash
+npm install backless-ai
+```
+
+## Setup
+
+To use the Text to Speech functionality, import the necessary functions from the library and integrate them into your application:
+
+```javascript
+import { getPublicClient } from 'backless-ai';
+
+const client = getPublicClient('YOUR_API_KEY');
+```
+
+## Configuration Options
+
+You can configure the Text to Speech function with the following parameters:
+
+- **`input`**: The text string you want to convert to speech.
+- **`model`**: Specify the TTS model to use.
+- **`voice`**: Choose the voice type (e.g., 'alloy').
+
+## Best Practices
+
+- **Contextual Use**: Utilize TTS where it enhances the user experience, such as in accessibility features or interactive storytelling.
+- **Performance Considerations**: Be mindful of the loading times and resource usage when integrating TTS, especially on mobile devices.
+- **Privacy Compliance**: Ensure that any text processed by TTS does not violate user privacy or data regulations.

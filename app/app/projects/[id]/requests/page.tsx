@@ -71,7 +71,7 @@ export default async function Index({ params }: { params: { id: string } }) {
   return (
     <div className="flex flex-col gap-4 m-auto border rounded-md p-4 max-w-6xl w-full overflow-hidden">
       <h2 className="text-lg font-bold">
-        Requests
+        Usage
       </h2>
       {/* requestCount */}
       <div className="flex flex-row gap-4">

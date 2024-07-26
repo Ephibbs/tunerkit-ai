@@ -21,7 +21,7 @@ export default async function Index({
     children: React.ReactNode;
 }) {
     return (
-        <div className="w-full max-w-7xl mx-auto flex flex-row">
+        <div className="w-full max-w-6xl mx-auto flex flex-row">
             <Aside/>
             <div
                 id="main-content"
