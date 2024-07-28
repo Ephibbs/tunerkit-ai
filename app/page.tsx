@@ -35,28 +35,28 @@ export default async function Index() {
     data: { user },
   } = await supabase.auth.getUser();
   console.log(user);
-  if (user && isSubscribed(user, supabase)) {
-    return redirect("/app");
-  }
+  // if (user) {
+  //   return redirect("/app");
+  // }
 
   return (
-    <div className="flex flex-col items-center pt-24 w-full bg-neutral-50">
+    <div className="flex flex-col items-center justify-center pt-24 w-full bg-neutral-50 flex-grow">
       <div className="w-full max-w-6xl">
         <div className="flex flex-col space-y-4 gap-2 w-full max-w-3xl my-16 mx-auto">
-          <AnimatedGradientText>
+          <AnimatedGradientText className="bg-gray-800">
             <span
               className={cn(
                 `inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent`,
               )}
             >
-              Backless AI + UI
+              Tunerkit AI
             </span>
           </AnimatedGradientText>
           <h1 className="text-4xl md:text-4xl lg:text-5xl font-extrabold text-center">
-            Add AI to your web & mobile apps in minutes
+            Finetune your own super powered AI models without code
           </h1>
           <p className="text-gray-600 text-lg text-center">
-            Focus on the UX. We'll handle the user management, storage, rate-limiting, analytics, and everything else.
+            Generate exceptional synthetic data and fine-tune your own AI agents with no code. Understand how your models work in every situation and make them better.
           </p>
           <Link href="/login" className="w-fit m-auto">
             <Button className="w-full lg:w-fit text-lg py-6 px-6 my-3 bg-red-500 hover:bg-red-600 font-bold">Start now</Button>
@@ -71,14 +71,7 @@ export default async function Index() {
         </div> */}
       </div>
   
-      <div className="w-full max-w-6xl rounded-tl-[5rem] bg-gradient-to-tl from-transparent via-transparent via-60% to-neutral-200">
-        {/* <div className="flex flex-col items-center gap-8 p-8 max-w-7xl ">
-          <h2 className="text-5xl font-extrabold text-center bg-gray-100 rounded-md p-4 shadow-md">Backless AI</h2>
-          <h2 className="text-4xl font-extrabold text-center">=</h2>
-          <h2 className="text-3xl font-extrabold text-center bg-gray-100 rounded-md p-2 shadow-md">A UI library built for cutting-edge AI</h2>
-          <h2 className="text-4xl font-extrabold text-center">+</h2>
-          <h2 className="text-3xl font-extrabold text-center bg-gray-100 rounded-md p-2 shadow-md">A fast, scalable AI backend with everything you need</h2>
-        </div> */}
+      {/* <div className="w-full max-w-6xl rounded-tl-[5rem] bg-gradient-to-tl from-transparent via-transparent via-60% to-neutral-200">
         <div className="flex flex-col items-center gap-8 p-8 max-w-3xl m-auto">
           <h2 className="text-4xl font-extrabold text-center mt-10">Features</h2>
           <p className="text-lg text-center text-gray-600">
@@ -96,8 +89,8 @@ export default async function Index() {
             </Link>
           </div>
         </div>
-      </div>
-      <PricingSection />
+      </div> */}
+      {/* // <PricingSection /> */}
       {/* <div className="flex flex-col items-center pt-16">
         * Accounts receive $0.20 in credits free. When using chatgpt 3.5, this equates to about 250 messages.
       </div> */}

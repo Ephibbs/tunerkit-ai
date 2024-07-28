@@ -20,11 +20,11 @@ type ModelsTableProps = {
   models: modelRowWithSamples[];
 };
 
-export default function ProjectsList({ projects }: { projects: Array<{ id: number; name: string }> }) {
+export default function ProjectsList({ projects, path }: { projects: Array<{ id: number; name: string }>, path: string }) {
   const router = useRouter();
 
   const handleRedirect = (id: number) => {
-    router.push(`/app/projects/${id}`);
+    router.push(`${path}/${id}`);
   };
 
   return (

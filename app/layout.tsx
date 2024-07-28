@@ -7,8 +7,8 @@ import { Analytics } from "@vercel/analytics/react";
 import { CSPostHogProvider } from './providers'
 
 export const metadata = {
-  title: "Backless AI",
-  description: "The fastest way to build UIs with AI backends.",
+  title: "Tunerkit AI",
+  description: "The fastest way to build finetuned AI agents",
 };
 
 export default function RootLayout({ children }: any) {

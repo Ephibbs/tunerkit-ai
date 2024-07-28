@@ -5,6 +5,7 @@ import { Database } from "@/types/supabase";
 import { modelRowWithSamples } from "@/types/utils";
 import { createClient } from '@/utils/supabase/client'
 import Link from "next/link";
+import Image from 'next/image';
 import { useEffect, useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,8 +17,7 @@ import * as z from "zod";
 import SaveOpenAIKeySection from "@/components/SaveOpenAIKey";
 import { FaImages } from "react-icons/fa";
 import ProjectsList from "../ModelsTable";
-import SpeechGenerator from "@/components/example-supabase-component";
-
+import Logo from '@/public/badge-svgrepo-com.svg';
 export const revalidate = 0;
 
 type ClientSideModelsListProps = {
@@ -107,13 +107,13 @@ export default function ClientSideProjectsList({
               </Button>
             </Link>
           </div>
-          <ProjectsList projects={projects} />
+          <ProjectsList projects={projects} path={'/app/projects'}/>
         </div>
       )}
       {projects && projects.length === 0 && (
-        <div className="flex flex-col gap-4 items-center my-16">
-          <FaImages size={64} className="text-gray-500" />
-          <h1 className="text-2xl">
+        <div className="flex flex-col gap-8 items-center my-16">
+          <Image src={Logo} alt="Tunerkit" width={120} height={120} />
+          <h1 className="text-2xl font-bold">
             Start your first project
           </h1>
           <div>
@@ -123,7 +123,7 @@ export default function ClientSideProjectsList({
           </div>
         </div>
       )}
-      <SaveOpenAIKeySection />
+      {/* <SaveOpenAIKeySection /> */}
       {/* <SpeechGenerator /> */}
     </div>
   );

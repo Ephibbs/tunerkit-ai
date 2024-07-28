@@ -1,12 +1,12 @@
-import Link from "next/link";
+// import Link from "next/link";
 
 export default function Footer() {
   return (
     <footer className="text-center px-4 lg:px-40 py-4 h-12 sm:h-20 w-full sm:pt-2 pt-4 border-t flex sm:flex-row flex-col justify-between items-center space-y-3 sm:mb-0 mb-3 border-gray-200">
       <div className="text-gray-500 text-xs">
-        © 2024 Backless AI. All rights reserved. Operated by Common AI LLC.
+        © 2024 Tunerkit AI. All rights reserved. A product by Common AI LLC.
       </div>
-      <div className="flex space-x-4 pb-4 sm:pb-0 items-center">
+      {/* <div className="flex space-x-4 pb-4 sm:pb-0 items-center">
         <Link
           href="https://x.com/Astria_AI"
           className="group text-gray-500 text-lg font-bold hover:text-gray-300"
@@ -38,7 +38,7 @@ export default function Footer() {
             <path d="M2 4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4zm2 0v10h16V4H4zm6 10h2v-4h-2v4zm-1-5h.01M15 9a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
           </svg>
         </Link>
-      </div>
+      </div> */}
     </footer>
   );
 }

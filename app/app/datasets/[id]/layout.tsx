@@ -18,19 +18,19 @@ export default async function Index({ params, children }: { params: { id: string
         return <Login />;
     }
 
-    const { data: project } = await supabase
-        .from("projects")
+    const { data: datasets } = await supabase
+        .from("datasets")
         .select("*")
         .eq("id", params.id)
         .single();
 
-    if (!project) {
-        redirect("/app");
+    if (!datasets) {
+        redirect("/app/datasets");
     }
 
     return (
         <div className="h-full mt-6 m-auto max-w-5xl w-full">
-            <ProjectNavbar projectId={params.id} projectName={project?.name} />
+            <ProjectNavbar projectId={params.id} projectName={datasets?.name} />
             <div>
                 {children}
             </div>

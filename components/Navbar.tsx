@@ -12,7 +12,7 @@ import {
 } from "./ui/dropdown-menu";
 import Link from "next/link";
 import Image from 'next/image';
-import Logo from '@/public/coupons-svgrepo-com.svg';
+import Logo from '@/public/badge-svgrepo-com.svg';
 import { Button } from "./ui/button";
 import React from "react";
 import { Database } from "@/types/supabase";
@@ -40,14 +40,29 @@ export default async function Navbar() {
       <div className="flex m-auto w-full max-w-6xl items-center text-center justify-between px-4">
         <div className="flex gap-2 h-full">
           <Link href="/" className="flex items-center gap-1">
-            <Image src={Logo} alt="Backless AI" width={30} height={30} />
-            <h2 className="font-bold text-lg pr-8">Backless</h2>
+            <Image src={Logo} alt="Tunerkit" width={30} height={30} />
+            <h2 className="font-bold text-lg pr-8">tunerkit</h2>
           </Link>
         </div>
         {user && (
-          <div className="hidden lg:flex flex-row gap-2">
-            <Link href="/app">
+          <div className="flex flex-row justify-start gap-2">
+            {/* <Link href="/app">
               <Button variant={"ghost"}>Projects</Button>
+            </Link> */}
+            <Link href="/app/datasets">
+              <Button variant={"ghost"}>Datasets</Button>
+            </Link>
+            <Link href="/app/user-lists">
+              <Button variant={"ghost"}>User Lists</Button>
+            </Link>
+            {/* <Link href="/app/tools">
+              <Button variant={"ghost"}>Tools</Button>
+            </Link>
+            <Link href="/app/judges">
+              <Button variant={"ghost"}>Judges</Button>
+            </Link> */}
+            <Link href="/app/finetunes">
+              <Button variant={"ghost"}>Finetunes</Button>
             </Link>
             {/* <Link href="/logs">
               <Button variant={"ghost"}>Requests</Button>
@@ -63,15 +78,15 @@ export default async function Navbar() {
             {/* <Link href="/docs">
               <Button variant={"ghost"}>Docs</Button>
             </Link> */}
-            <Link href="/docs">
+            {/* <Link href="/docs">
               <Button variant={"ghost"}>Docs</Button>
             </Link>
             <Link href="/support">
               <Button variant={"ghost"}>Support</Button>
-            </Link>
+            </Link> */}
           </div>
         )}
-        <div className="flex gap-4 lg:ml-auto">
+        <div className="flex gap-4 ml-auto">
           {!user && (
             <Link href="/login">
               <Button variant={"ghost"}>Login / Signup</Button>

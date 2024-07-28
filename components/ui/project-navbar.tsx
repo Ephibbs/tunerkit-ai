@@ -6,7 +6,6 @@ import { FaArrowLeft } from "react-icons/fa";
 
 export const ProjectNavbar = ({projectName, projectId}: {projectName: string, projectId: string}) => {
     const pathname = usePathname()
-    console.log(pathname)
     return <div className="flex flex-row gap-4">
         <Link href="/app" className="text-xs w-fit">
             <Button variant={"outline"} className="text-xs" size="sm">
@@ -19,6 +18,9 @@ export const ProjectNavbar = ({projectName, projectId}: {projectName: string, pr
             <div className="lg:flex flex-row gap-2">
                 <Link href={`/app/projects/${projectId}`} className={`${pathname === `/app/projects/${projectId}` ? "text-blue-500" : ""}`}>
                     <Button variant={"ghost"}>Dashboard</Button>
+                </Link>
+                <Link href={`/app/projects/${projectId}/datasets`} className={`${pathname === `/app/projects/${projectId}/datasets` ? "text-blue-500" : ""}`}>
+                    <Button variant={"ghost"}>Datasets</Button>
                 </Link>
                 {/* <Link href={`/app/projects/${projectId}/requests`} className={`${pathname === `/app/projects/${projectId}/requests` ? "text-blue-500" : ""}`}>
                     <Button variant={"ghost"}>Usage</Button>
